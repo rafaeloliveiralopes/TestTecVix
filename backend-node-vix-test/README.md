@@ -1,103 +1,226 @@
-# Backend Node Api
+# Teste Técnico Vituax - Backend
 
-## Getting started
+Este documento descreve os **primeiros passos**, **configuração do ambiente**, **execução em desenvolvimento**, **build** e **validações mínimas** necessárias para rodar o backend do projeto.
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+## Sumário
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
-
-```
-cd existing_repo
-git remote add origin https://gitlab.com/vituax1/backend-node-api.git
-git branch -M main
-git push -uf origin main
-```
-
-## Integrate with your tools
-
-- [ ] [Set up project integrations](https://gitlab.com/vituax1/backend-node-api/-/settings/integrations)
-
-## Collaborate with your team
-
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
-
-## Test and Deploy
-
-Use the built-in continuous integration in GitLab.
-
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+- [Pré-requisitos](#pré-requisitos)
+- [Setup inicial do ambiente](#setup-inicial-do-ambiente)
+- [Execução em modo desenvolvimento](#execução-em-modo-desenvolvimento)
+- [Build e execução do build](#build-e-execução-do-build)
+- [Validações mínimas](#validações-mínimas)
+- [Troubleshooting](#troubleshooting)
 
 ---
 
-# Editing this README
+## Pré-requisitos
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+Antes de iniciar, é necessário ter instalado:
 
-## Suggestions for a good README
+- Node.js (versão LTS)
+- npm
+- Docker
+- Docker Compose
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+---
 
-## Name
+## Setup inicial do ambiente
 
-Choose a self-explaining name for your project.
+### 1) Instalação das dependências
 
-## Description
+Acesse o diretório do backend:
 
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+```bash
+cd backend-node-vix-test
+```
 
-## Badges
+Instale as dependências do projeto:
 
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+```bash
+npm install
+```
 
-## Visuals
+---
 
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+### 2) Variáveis de ambiente
 
-## Installation
+Crie o arquivo `.env` a partir do arquivo de exemplo:
 
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+```bash
+cp .env.example .env
+```
 
-## Usage
+Verifique se a variável `DATABASE_URL` está configurada corretamente, apontando para a porta utilizada pelo MySQL no projeto.
 
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+Exemplo de configuração:
 
-## Support
+```env
+DATABASE_URL=mysql://root:password@localhost:3312/test-cloud-db
+```
 
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+---
 
-## Roadmap
+### 3) Subir banco de dados (MySQL via Docker)
 
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+Suba apenas o banco de dados MySQL:
 
-## Contributing
+```bash
+npm run db:up
+```
 
-State if you are open to contributions and what your requirements are for accepting them.
+Valide se o container está em estado saudável (`healthy`):
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+```bash
+docker ps --filter "name=mysql-test-cloud" --format "table {{.Names}}\t{{.Status}}"
+docker inspect -f '{{.State.Health.Status}}' mysql-test-cloud
+```
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+O status esperado é:
 
-## Authors and acknowledgment
+```text
+healthy
+```
 
-Show your appreciation to those who have contributed to the project.
+---
 
-## License
+### 4) Prisma (gerar client, aplicar migrations e seed)
 
-For open source projects, say how it is licensed.
+Com o banco de dados em estado saudável, execute:
 
-## Project status
+```bash
+npx prisma generate
+npx prisma migrate reset
+```
 
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+Este processo irá:
+
+- Gerar o Prisma Client
+- Recriar o schema do banco
+- Executar as migrations
+- Popular o banco com dados de seed (ambiente local)
+
+Este é o fluxo recomendado para ambientes de desenvolvimento.
+
+Opcionalmente, o Prisma Studio pode ser utilizado para inspecionar os dados:
+
+```bash
+npx prisma studio
+```
+
+---
+
+## Execução em modo desenvolvimento
+
+Inicie a aplicação em modo desenvolvimento:
+
+```bash
+npm run dev
+```
+
+A API ficará disponível em:
+
+```text
+http://localhost:3001
+```
+
+---
+
+## Validações mínimas
+
+Com o backend em execução, valide os seguintes pontos:
+
+### Endpoint principal
+
+```bash
+curl -i "http://localhost:3001/api/v1/vm?limit=20"
+```
+
+Resultado esperado:
+
+- Status HTTP `200`
+- Resposta JSON contendo:
+  - `totalCount`
+  - `result`
+
+### Validação das variáveis de ambiente
+
+```bash
+node -e "require('dotenv').config(); console.log(process.env.DATABASE_URL)"
+```
+
+O valor impresso deve corresponder à configuração definida no `.env`.
+
+---
+
+## Build e execução do build
+
+### Execução dos testes
+
+Para rodar os testes automatizados:
+
+```bash
+npm test
+```
+
+---
+
+### Gerar build
+
+```bash
+npm run build
+```
+
+---
+
+### Executar build (modo produção local)
+
+```bash
+npm run start
+```
+
+Opcionalmente, caso exista script de lint configurado:
+
+```bash
+npm run lint
+```
+
+---
+
+## Troubleshooting
+
+### Banco de dados não fica `healthy`
+
+- Verifique os logs do container MySQL:
+
+```bash
+docker logs --tail 100 mysql-test-cloud
+```
+
+- Caso necessário, recrie o container e o volume do banco local (os dados serão removidos):
+
+```bash
+docker compose -f docker-compose-db.yml down -v
+npm run db:up
+```
+
+---
+
+### Prisma falha com erro de schema, tabelas ou seed
+
+- Verifique se o banco está em estado `healthy`
+- Reexecute o fluxo do Prisma:
+
+```bash
+npx prisma generate
+npx prisma migrate reset
+```
+
+---
+
+### Endpoint `/api/v1/vm` retorna erro 500
+
+- Verifique se as migrations e o seed foram aplicados corretamente
+- Confirme a validade das variáveis de ambiente no arquivo `.env`
+- Reexecute os passos a partir da configuração do Prisma
+
+---
