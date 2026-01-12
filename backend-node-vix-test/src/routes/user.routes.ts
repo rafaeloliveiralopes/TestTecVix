@@ -1,5 +1,6 @@
 import { Router, Response } from "express";
 import { CustomRequest } from "../types/custom";
+import { ParamsDictionary } from "express-serve-static-core";
 import { user } from "@prisma/client";
 import { UserController } from "../controllers/UserController";
 import { requireRoles } from "../middlewares/requireRoles";
@@ -10,8 +11,10 @@ const userRoutes = Router();
 const userController = new UserController();
 
 // Leitura para todos
-userRoutes.get(BASE_PATH, (req: CustomRequest<user>, res: Response) =>
-  userController.listAll(req, res),
+userRoutes.get(
+  BASE_PATH,
+  (req: CustomRequest<user, ParamsDictionary>, res: Response) =>
+    userController.listAll(req, res),
 );
 userRoutes.get(
   `${BASE_PATH}/:idUser`,
@@ -23,8 +26,10 @@ userRoutes.get(
 userRoutes.post(
   BASE_PATH,
   requireRoles(["manager", "admin"]),
-  (req: CustomRequest<user, {}, unknown, Partial<user>>, res: Response) =>
-    userController.create(req, res),
+  (
+    req: CustomRequest<user, ParamsDictionary, unknown, Partial<user>>,
+    res: Response,
+  ) => userController.create(req, res),
 );
 userRoutes.put(
   `${BASE_PATH}/:idUser`,

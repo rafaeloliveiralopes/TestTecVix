@@ -1,5 +1,6 @@
 import { Response } from "express";
 import { CustomRequest } from "../types/custom";
+import { ParamsDictionary } from "express-serve-static-core";
 import { TBrandMaster } from "../types/validations/BrandMaster/createBrandMaster";
 import { BrandMasterService } from "../services/BrandMasterService";
 import { user } from "@prisma/client";
@@ -25,7 +26,7 @@ export class BrandMasterController {
   }
 
   async createNewBrandMaster(
-    req: CustomRequest<user, {}, unknown, TBrandMaster>,
+    req: CustomRequest<user, ParamsDictionary, unknown, TBrandMaster>,
     res: Response,
   ) {
     const user = req.user as user;
