@@ -12,6 +12,11 @@ export class UserController {
     return res.status(STATUS_CODE.CREATED).json(result);
   }
 
+  async login(req: CustomRequest<unknown>, res: Response) {
+    const result = await this.userService.login(req.body);
+    return res.status(STATUS_CODE.OK).json(result);
+  }
+
   async getById(req: CustomRequest<unknown>, res: Response) {
     const { idUser } = req.params;
     const userId = Array.isArray(idUser) ? idUser[0] : idUser;

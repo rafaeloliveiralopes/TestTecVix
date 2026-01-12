@@ -4,6 +4,10 @@ import { userCreatedSchema } from "../types/validations/User/createUser";
 import { AppError } from "../errors/AppError";
 import { ERROR_MESSAGE } from "../constants/erroMessages";
 import { STATUS_CODE } from "../constants/statusCode";
+import { genToken } from "../utils/jwt";
+import userLoginSchema, {
+  TUserLogin,
+} from "../types/validations/User/loginUser";
 
 export class UserService {
   constructor() {}
@@ -54,5 +58,40 @@ export class UserService {
 
   async getById(idUser: string) {
     return await this.userModel.getById(idUser);
+  }
+
+  async login(data: unknown) {
+    const validData = userLoginSchema.parse(data) as TUserLogin;
+
+    const userFound = await this.userModel.findByEmail(validData.email);
+    if (!userFound) {
+      throw new AppError(
+        ERROR_MESSAGE.INVALID_EMAIL_OR_PASSWORD,
+        STATUS_CODE.UNAUTHORIZED,
+      );
+    }
+
+    const isValidPassword = await bcrypt.compare(
+      validData.password,
+      userFound.password,
+    );
+
+    if (!isValidPassword) {
+      throw new AppError(
+        ERROR_MESSAGE.INVALID_EMAIL_OR_PASSWORD,
+        STATUS_CODE.UNAUTHORIZED,
+      );
+    }
+
+    // atualizar lastLoginDate
+    await this.userModel.updateLastLoginDate(userFound.idUser);
+
+    const token = genToken({
+      idUser: userFound.idUser,
+      role: userFound.role as "admin" | "manager" | "member",
+      idBrandMaster: userFound.idBrandMaster ?? undefined,
+    } as any);
+
+    return { token };
   }
 }

@@ -17,4 +17,9 @@ authRoutes.post(`${BASE_PATH}/register`, async (req, res) => {
   await userController.register(req, res);
 });
 
+// POST /api/v1/auth/login
+authRoutes.post(`${BASE_PATH}/login`, async (req, res) => {
+  await userController.login(req, res);
+});
+
 export { authRoutes };
