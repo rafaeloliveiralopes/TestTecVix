@@ -1,10 +1,10 @@
-import { user, vM } from "@prisma/client";
+import { user } from "@prisma/client";
 import { VMModel } from "../models/VMModel";
-import { TVMCreate, vMCreatedSchema } from "../types/validations/VM/createVM";
+import { vMCreatedSchema } from "../types/validations/VM/createVM";
 import { AppError } from "../errors/AppError";
 import { ERROR_MESSAGE } from "../constants/erroMessages";
 import { STATUS_CODE } from "../constants/statusCode";
-import { TVMUpdate, vMUpdatedSchema } from "../types/validations/VM/updateVM";
+import { vMUpdatedSchema } from "../types/validations/VM/updateVM";
 import { vmListAllSchema } from "../types/validations/VM/vmListAll";
 
 export class VMService {

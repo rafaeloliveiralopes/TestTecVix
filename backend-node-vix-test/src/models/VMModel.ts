@@ -2,7 +2,7 @@ import { prisma } from "../database/client";
 import { TVMCreate } from "../types/validations/VM/createVM";
 import { TVMUpdate } from "../types/validations/VM/updateVM";
 import { IListAllVM } from "../types/IListAll";
-import moment from "moment";
+// import moment from "moment";
 
 export class VMModel {
   async getById(idVM: number) {
