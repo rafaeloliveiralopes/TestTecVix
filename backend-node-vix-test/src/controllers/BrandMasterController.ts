@@ -1,5 +1,6 @@
 import { Response } from "express";
 import { CustomRequest } from "../types/custom";
+import { TBrandMaster } from "../types/validations/BrandMaster/createBrandMaster";
 import { BrandMasterService } from "../services/BrandMasterService";
 import { user } from "@prisma/client";
 import { STATUS_CODE } from "../constants/statusCode";
@@ -23,7 +24,10 @@ export class BrandMasterController {
     return res.status(STATUS_CODE.OK).json(result);
   }
 
-  async createNewBrandMaster(req: CustomRequest<unknown>, res: Response) {
+  async createNewBrandMaster(
+    req: CustomRequest<user, {}, unknown, TBrandMaster>,
+    res: Response,
+  ) {
     const user = req.user as user;
     const result = await this.brandMasterService.createNewBrandMaster(
       req.body,
@@ -32,7 +36,10 @@ export class BrandMasterController {
     return res.status(STATUS_CODE.CREATED).json(result);
   }
 
-  async updateBrandMaster(req: CustomRequest<unknown>, res: Response) {
+  async updateBrandMaster(
+    req: CustomRequest<user, { idBrandMaster: string }, unknown, TBrandMaster>,
+    res: Response,
+  ) {
     const user = req.user as user;
     const { idBrandMaster } = req.params;
     const result = await this.brandMasterService.updateBrandMaster(

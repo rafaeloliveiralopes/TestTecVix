@@ -1,4 +1,5 @@
 import { Response } from "express";
+import { user as PrismaUser } from "@prisma/client";
 import { CustomRequest } from "../types/custom";
 import { UserService } from "../services/UserService";
 import { STATUS_CODE } from "../constants/statusCode";
@@ -6,6 +7,7 @@ import { STATUS_CODE } from "../constants/statusCode";
 // Controller responsável pelas operações CRUD e autenticação de usuários
 export class UserController {
   constructor() {}
+
   // Service de usuários
   private userService = new UserService();
 
@@ -22,50 +24,47 @@ export class UserController {
   }
 
   // Busca um usuário pelo id (GET /users/:idUser)
-  async getById(req: CustomRequest<unknown>, res: Response) {
+  async getById(
+    req: CustomRequest<PrismaUser, { idUser: string }>,
+    res: Response,
+  ) {
     const { idUser } = req.params;
-    const userId = Array.isArray(idUser) ? idUser[0] : idUser;
-    const result = await this.userService.getById(userId);
+    const result = await this.userService.getById(idUser);
     return res.status(STATUS_CODE.OK).json(result);
   }
 
   // Lista todos os usuários (GET /users)
-  async listAll(req: CustomRequest<unknown>, res: Response) {
+  async listAll(req: CustomRequest<PrismaUser>, res: Response) {
     const result = await this.userService.listAll();
     return res.status(STATUS_CODE.OK).json(result);
   }
 
-  // Cria um novo usuário (POST /users) - protegido por role
-  async create(req: CustomRequest<unknown>, res: Response) {
-    // Se não for admin, não pode setar role
-    let data = { ...req.body };
-    if (req.user?.role !== "admin") {
-      delete data.role;
-    }
-    const result = await this.userService.register(data);
+  // Cria um novo usuário (POST /users) - protegido por role (middleware na rota)
+  async create(req: CustomRequest<PrismaUser>, res: Response) {
+    const result = await this.userService.register(req.body);
     return res.status(STATUS_CODE.CREATED).json(result);
   }
 
-  // Atualiza um usuário existente (PUT /users/:idUser) - protegido por role
-  async update(req: CustomRequest<unknown>, res: Response) {
+  // Atualiza um usuário (PUT /users/:idUser) - manager/admin; member bloqueado (middleware requireRoles na rota)
+  async update(
+    req: CustomRequest<
+      PrismaUser,
+      { idUser: string },
+      unknown,
+      Partial<PrismaUser>
+    >,
+    res: Response,
+  ) {
     const { idUser } = req.params;
-    let data = { ...req.body };
-    // Nunca permitir alteração destes campos
-    ["password", "deletedAt", "createdAt", "updatedAt", "idUser"].forEach(
-      (field) => {
-        delete data[field];
-      },
-    );
-    // Se não for admin, não pode editar role
-    if (req.user?.role !== "admin") {
-      delete data.role;
-    }
-    const result = await this.userService.update(idUser, data);
+    const result = await this.userService.update(idUser, req.body);
     return res.status(STATUS_CODE.OK).json(result);
   }
 
-  // Deleta um usuário (DELETE /users/:idUser) - apenas admin
-  async delete(req: CustomRequest<unknown>, res: Response) {
+  // Deleta um usuário (DELETE /users/:idUser) - apenas admin (middleware na rota)
+  async delete(
+    req: CustomRequest<PrismaUser, { idUser: string }>,
+    res: Response,
+  ) {
     const { idUser } = req.params;
     await this.userService.delete(idUser);
     return res.status(STATUS_CODE.NO_CONTENT).send();
