@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import { UserModel } from "../models/UserModel";
 import { userCreatedSchema } from "../types/validations/User/createUser";
+import { user } from "@prisma/client";
 import { AppError } from "../errors/AppError";
 import { ERROR_MESSAGE } from "../constants/erroMessages";
 import { STATUS_CODE } from "../constants/statusCode";
@@ -60,6 +61,38 @@ export class UserService {
     return await this.userModel.getById(idUser);
   }
 
+  async listAll() {
+    return await this.userModel.listAll();
+  }
+
+  // Atualiza usuário com sanitização defensiva (autorização via middleware).
+  async update(idUser: string, data: unknown): Promise<user> {
+    const sanitizedData =
+      typeof data === "object" && data !== null && !Array.isArray(data)
+        ? { ...(data as Record<string, unknown>) }
+        : {};
+
+    // Campos que nunca devem ser alterados via update genérico
+    const forbidden = [
+      "password",
+      "deletedAt",
+      "createdAt",
+      "updatedAt",
+      "idUser",
+      "role",
+    ];
+
+    for (const field of forbidden) {
+      delete sanitizedData[field];
+    }
+
+    return await this.userModel.update(idUser, sanitizedData as Partial<user>);
+  }
+
+  async delete(idUser: string) {
+    return await this.userModel.delete(idUser);
+  }
+
   async login(data: unknown) {
     const validData = userLoginSchema.parse(data) as TUserLogin;
 
@@ -85,12 +118,10 @@ export class UserService {
 
     // atualizar lastLoginDate
     await this.userModel.updateLastLoginDate(userFound.idUser);
-
     const token = genToken({
       idUser: userFound.idUser,
       role: userFound.role as "admin" | "manager" | "member",
-      idBrandMaster: userFound.idBrandMaster ?? undefined,
-    } as any);
+    });
 
     return { token };
   }

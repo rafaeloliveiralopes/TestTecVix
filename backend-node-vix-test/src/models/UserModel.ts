@@ -42,6 +42,25 @@ export class UserModel {
     });
   }
 
+  async listAll(): Promise<user[]> {
+    return await prisma.user.findMany({ where: { deletedAt: null } });
+  }
+
+  async update(idUser: string, data: Partial<user>): Promise<user> {
+    // Não permitir update de campos sensíveis diretamente
+    return await prisma.user.update({
+      where: { idUser },
+      data: { ...data, updatedAt: new Date() },
+    });
+  }
+
+  async delete(idUser: string): Promise<void> {
+    await prisma.user.update({
+      where: { idUser },
+      data: { deletedAt: new Date(), updatedAt: new Date() },
+    });
+  }
+
   async updateLastLoginDate(idUser: string): Promise<void> {
     await prisma.user.update({
       where: { idUser },
