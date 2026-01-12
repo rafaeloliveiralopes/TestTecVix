@@ -19,7 +19,8 @@ function getSecret(): jwt.Secret {
 export const genToken = (payload: IPayload): string => {
   const secret = getSecret();
 
-  const expiresIn = (process.env.JWT_EXPIRES_IN ?? "1d") as jwt.SignOptions["expiresIn"];
+  const expiresIn = (process.env.JWT_EXPIRES_IN ??
+    "1d") as jwt.SignOptions["expiresIn"];
 
   return jwt.sign(payload, secret, {
     expiresIn,
@@ -46,7 +47,10 @@ export const verifyToken = (token: string): IPayload => {
 
     return { idUser, role };
   } catch (error) {
-    if (error instanceof TokenExpiredError || error instanceof JsonWebTokenError) {
+    if (
+      error instanceof TokenExpiredError ||
+      error instanceof JsonWebTokenError
+    ) {
       throw new AppError(ERROR_MESSAGE.INVALID_TOKEN, STATUS_CODE.UNAUTHORIZED);
     }
     throw new AppError(ERROR_MESSAGE.INVALID_TOKEN, STATUS_CODE.UNAUTHORIZED);
