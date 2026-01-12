@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import { UserModel } from "../models/UserModel";
 import { userCreatedSchema } from "../types/validations/User/createUser";
+import { user } from "@prisma/client";
 import { AppError } from "../errors/AppError";
 import { ERROR_MESSAGE } from "../constants/erroMessages";
 import { STATUS_CODE } from "../constants/statusCode";
@@ -60,6 +61,26 @@ export class UserService {
     return await this.userModel.getById(idUser);
   }
 
+  async listAll() {
+    return await this.userModel.listAll();
+  }
+
+  async update(idUser: string, data: Partial<user>): Promise<user> {
+    // Não permitir update de campos sensíveis diretamente
+    const sanitizedData = { ...data };
+    ["password", "deletedAt", "createdAt", "updatedAt", "idUser"].forEach(
+      (field) => {
+        delete sanitizedData[field as keyof typeof sanitizedData];
+      },
+    );
+    // Só permite alteração de role se vier explicitamente de admin (deve ser controlado no controller)
+    return await this.userModel.update(idUser, sanitizedData);
+  }
+
+  async delete(idUser: string) {
+    return await this.userModel.delete(idUser);
+  }
+
   async login(data: unknown) {
     const validData = userLoginSchema.parse(data) as TUserLogin;
 
@@ -85,12 +106,10 @@ export class UserService {
 
     // atualizar lastLoginDate
     await this.userModel.updateLastLoginDate(userFound.idUser);
-
     const token = genToken({
       idUser: userFound.idUser,
       role: userFound.role as "admin" | "manager" | "member",
-      idBrandMaster: userFound.idBrandMaster ?? undefined,
-    } as any);
+    });
 
     return { token };
   }
