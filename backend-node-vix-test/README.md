@@ -335,3 +335,19 @@ Content-Type: application/json
 
 - 401 Unauthorized – Email ou senha inválidos
 - 400 Bad Request – Dados inválidos
+
+## Endpoints de Usuários (CRUD) implementados
+
+As rotas abaixo foram implementadas no backend e seguem a matriz de permissões do desafio.
+
+- **GET /api/v1/users** — Lista todos os usuários. Acesso: `member`, `manager`, `admin` (usuários autenticados).
+- **GET /api/v1/users/:idUser** — Retorna um usuário por `idUser`. Acesso: `member`, `manager`, `admin`.
+- **POST /api/v1/users** — Cria um novo usuário. Acesso: `manager`, `admin`.
+- **PUT /api/v1/users/:idUser** — Atualiza usuário existente. Acesso: `manager`, `admin`.
+- **DELETE /api/v1/users/:idUser** — Remove um usuário. Acesso: `admin`.
+
+Observações de segurança aplicadas:
+
+- O controller sanitiza o `body` de criação/atualização para impedir que campos sensíveis sejam alterados (`password`, `deletedAt`, `createdAt`, `updatedAt`, `idUser`).
+- Quando o ator não é `admin`, o campo `role` enviado no corpo é removido (não é possível por `manager` ou `member` promover usuários).
+- Há validação adicional no serviço como defesa em profundidade antes de persistir no banco.
