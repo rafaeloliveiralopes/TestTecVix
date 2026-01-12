@@ -162,6 +162,17 @@ Para rodar os testes automatizados:
 npm test
 ```
 
+Para rodar apenas o teste de integração criado para o endpoint de autenticação (`POST /api/v1/auth/register`):
+
+```bash
+npx jest __tests__/integrations/Auth.test.ts -i --runInBand
+```
+
+Observações:
+
+- O teste `__tests__/integrations/Auth.test.ts` utiliza `prismaMock` (arquivo `__tests__/singleton.ts`) para isolar chamadas ao Prisma e não exige um banco de dados real quando executado isoladamente.
+- Para rodar a suíte completa (que pode incluir testes que dependem do banco), siga o fluxo de setup do banco e do Prisma descrito na seção **Setup inicial do ambiente**.
+
 ---
 
 ### Gerar build
@@ -248,17 +259,17 @@ Content-Type: application/json
 
 **Campos obrigatórios**
 
-* username
-* email
-* password
-* role
+- username
+- email
+- password
+- role
 
 **Regras**
 
-* O email deve ser único
-* O username deve ser único
-* A senha nunca é armazenada em texto puro (hash com bcrypt)
-* Validação de dados realizada com Zod
+- O email deve ser único
+- O username deve ser único
+- A senha nunca é armazenada em texto puro (hash com bcrypt)
+- Validação de dados realizada com Zod
 
 **Resposta de sucesso (201)**
 
@@ -275,6 +286,6 @@ Content-Type: application/json
 
 **Possíveis erros**
 
-* 409 Conflict – Email já cadastrado
-* 409 Conflict – Username já cadastrado
-* 400 Bad Request – Dados inválidos
+- 409 Conflict – Email já cadastrado
+- 409 Conflict – Username já cadastrado
+- 400 Bad Request – Dados inválidos
