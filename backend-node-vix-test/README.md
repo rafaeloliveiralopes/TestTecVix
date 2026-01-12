@@ -217,10 +217,64 @@ npx prisma migrate reset
 
 ---
 
-### Endpoint `/api/v1/vm` retorna erro 500
+## Autenticação
 
-- Verifique se as migrations e o seed foram aplicados corretamente
-- Confirme a validade das variáveis de ambiente no arquivo `.env`
-- Reexecute os passos a partir da configuração do Prisma
+### Registro de usuário
 
----
+Endpoint responsável por criar um novo usuário no sistema.
+
+**URL**
+
+```
+POST /api/v1/auth/register
+```
+
+**Headers**
+
+```
+Content-Type: application/json
+```
+
+**Body (JSON)**
+
+```json
+{
+  "username": "NomeUsuario",
+  "email": "email@example.com",
+  "password": "senhaSegura123",
+  "role": "member"
+}
+```
+
+**Campos obrigatórios**
+
+* username
+* email
+* password
+* role
+
+**Regras**
+
+* O email deve ser único
+* O username deve ser único
+* A senha nunca é armazenada em texto puro (hash com bcrypt)
+* Validação de dados realizada com Zod
+
+**Resposta de sucesso (201)**
+
+```json
+{
+  "idUser": "uuid",
+  "username": "NomeUsuario",
+  "email": "email@example.com",
+  "role": "member",
+  "isActive": true,
+  "createdAt": "2026-01-12T08:54:13.000Z"
+}
+```
+
+**Possíveis erros**
+
+* 409 Conflict – Email já cadastrado
+* 409 Conflict – Username já cadastrado
+* 400 Bad Request – Dados inválidos
