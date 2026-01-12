@@ -65,16 +65,28 @@ export class UserService {
     return await this.userModel.listAll();
   }
 
-  async update(idUser: string, data: Partial<user>): Promise<user> {
-    // Não permitir update de campos sensíveis diretamente
-    const sanitizedData = { ...data };
-    ["password", "deletedAt", "createdAt", "updatedAt", "idUser"].forEach(
-      (field) => {
-        delete sanitizedData[field as keyof typeof sanitizedData];
-      },
-    );
-    // Só permite alteração de role se vier explicitamente de admin (deve ser controlado no controller)
-    return await this.userModel.update(idUser, sanitizedData);
+  // Atualiza usuário com sanitização defensiva (autorização via middleware).
+  async update(idUser: string, data: unknown): Promise<user> {
+    const sanitizedData =
+      typeof data === "object" && data !== null && !Array.isArray(data)
+        ? { ...(data as Record<string, unknown>) }
+        : {};
+
+    // Campos que nunca devem ser alterados via update genérico
+    const forbidden = [
+      "password",
+      "deletedAt",
+      "createdAt",
+      "updatedAt",
+      "idUser",
+      "role",
+    ];
+
+    for (const field of forbidden) {
+      delete sanitizedData[field];
+    }
+
+    return await this.userModel.update(idUser, sanitizedData as Partial<user>);
   }
 
   async delete(idUser: string) {

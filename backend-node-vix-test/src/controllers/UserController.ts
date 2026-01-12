@@ -45,14 +45,10 @@ export class UserController {
     return res.status(STATUS_CODE.CREATED).json(result);
   }
 
-  // Atualiza um usuário (PUT /users/:idUser) - manager/admin; member bloqueado (middleware requireRoles na rota)
+  // Atualiza um usuário (PUT /users/:idUser).
+  // Autorização por role é aplicada na rota via middleware requireRoles.
   async update(
-    req: CustomRequest<
-      PrismaUser,
-      { idUser: string },
-      unknown,
-      Partial<PrismaUser>
-    >,
+    req: CustomRequest<PrismaUser, { idUser: string }, unknown, unknown>,
     res: Response,
   ) {
     const { idUser } = req.params;
