@@ -9,7 +9,7 @@ export const routes = Router();
 
 routes.use(authRoutes);
 
-// Aplicar middleware de autenticação a todas as rotas após /auth (login/register)
+// Rotas públicas: /auth/login e /auth/register. A partir daqui, exigir JWT nas demais rotas
 routes.use(authUser);
 
 routes.use(uploadsRoutes);
