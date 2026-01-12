@@ -48,7 +48,7 @@ export class UserService {
 
     // Remover senha da resposta (segurança)
     const { password: _password, ...userWithoutPassword } = newUser;
-
+    void _password;
     return userWithoutPassword;
   }
 
