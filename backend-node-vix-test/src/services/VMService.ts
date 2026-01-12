@@ -17,6 +17,7 @@ export class VMService {
   }
 
   async listAll(query: unknown, user: user) {
+    void user;
     const validQuery = vmListAllSchema.parse(query);
     return this.vMModel.listAll({
       query: validQuery,
@@ -24,6 +25,7 @@ export class VMService {
   }
 
   async createNewVM(data: unknown, user: user) {
+    void user;
     const validateData = vMCreatedSchema.parse(data);
 
     const createdVM = await this.vMModel.createNewVM({
@@ -35,6 +37,7 @@ export class VMService {
   }
 
   async updateVM(idVM: number, data: unknown, user: user) {
+    void user;
     const validateDataSchema = vMUpdatedSchema.parse(data);
     const oldVM = await this.getById(idVM);
 
@@ -47,6 +50,7 @@ export class VMService {
   }
 
   async deleteVM(idVM: number, user: user) {
+    void user;
     const oldVM = await this.getById(idVM);
     if (!oldVM) {
       throw new AppError(ERROR_MESSAGE.NOT_FOUND, STATUS_CODE.NOT_FOUND);

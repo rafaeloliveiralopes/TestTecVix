@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 
 const secret = process.env.SIGN_HASH;
 
-interface IPayload {}
+type IPayload = unknown;
 
 export const jwtVerifySign = (token: string): IPayload | null => {
   try {
