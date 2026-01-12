@@ -162,10 +162,18 @@ Para rodar os testes automatizados:
 npm test
 ```
 
-Para rodar apenas o teste de integração criado para o endpoint de autenticação (`POST /api/v1/auth/register`):
+Para rodar apenas os testes de integração criados para os endpoints de autenticação:
+
+- Registro (`POST /api/v1/auth/register`):
 
 ```bash
 npx jest __tests__/integrations/Auth.test.ts -i --runInBand
+```
+
+- Login (`POST /api/v1/auth/login`):
+
+```bash
+npx jest __tests__/integrations/AuthLogin.test.ts -i --runInBand
 ```
 
 Observações:
@@ -288,4 +296,42 @@ Content-Type: application/json
 
 - 409 Conflict – Email já cadastrado
 - 409 Conflict – Username já cadastrado
+- 400 Bad Request – Dados inválidos
+
+### Login de usuário
+
+Endpoint responsável por autenticar um usuário e retornar um token JWT.
+
+**URL**
+
+```
+POST /api/v1/auth/login
+```
+
+**Headers**
+
+```
+Content-Type: application/json
+```
+
+**Body (JSON)**
+
+```json
+{
+  "email": "email@example.com",
+  "password": "senhaSegura123"
+}
+```
+
+**Resposta de sucesso (200)**
+
+```json
+{
+  "token": "eyJhbGciOiJI..."
+}
+```
+
+**Possíveis erros**
+
+- 401 Unauthorized – Email ou senha inválidos
 - 400 Bad Request – Dados inválidos
