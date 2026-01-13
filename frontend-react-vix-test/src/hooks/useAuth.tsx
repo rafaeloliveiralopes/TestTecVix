@@ -9,16 +9,14 @@ export const useAuth = () => {
   const { token, setUser, idUser } = useZUserProfile();
   const { loginTime, setLoginTime } = useZGlobalVar();
 
-  const fetchNewUserToken = async () => {
-    if (!idUser) return "";
+  const fetchNewUserToken = async (): Promise<string | null> => {
+    if (!idUser || !token) return null;
     const response = await api.get<{ token: string | null }>({
       url: `/user/token/${idUser}`,
       auth: { Authorization: `Bearer ${token}` },
       tryRefetch: true,
     });
-    if (response.error || !response.data.token) {
-      return "";
-    }
+    if (response.error || !response.data.token) return null;
 
     return response.data.token;
   };
@@ -35,8 +33,10 @@ export const useAuth = () => {
 
     setLoginTime(new Date());
 
+    if (!token) return {};
+
     const newToken = await fetchNewUserToken();
-    setUser({ token: newToken });
+    if (newToken) setUser({ token: newToken });
     return { Authorization: `Bearer ${newToken || token}` };
   };
 

@@ -1,4 +1,6 @@
 import { Prisma, PrismaClient } from "@prisma/client";
+import bcrypt from "bcryptjs";
+import { randomUUID } from "crypto";
 import fs from "fs/promises";
 
 const prisma = new PrismaClient();
@@ -37,8 +39,27 @@ async function main() {
 
     try {
       tablesTryAgain = tablesTryAgain.filter((t) => t !== table);
+      const preparedData =
+        table === "user"
+          ? await Promise.all(
+              data.map(async (item) => {
+                const password = String(item?.password ?? "");
+                const isHashed =
+                  password.startsWith("$2a$") ||
+                  password.startsWith("$2b$") ||
+                  password.startsWith("$2y$");
+
+                return {
+                  ...item,
+                  idUser: item?.idUser || randomUUID(),
+                  password: isHashed ? password : await bcrypt.hash(password, 10),
+                  isActive: item?.isActive ?? true,
+                };
+              }),
+            )
+          : data;
       // @ts-expect-error ts(2349)
-      await prisma[table].createMany({ data });
+      await prisma[table].createMany({ data: preparedData });
     } catch (error) {
       if (
         error instanceof Error ||

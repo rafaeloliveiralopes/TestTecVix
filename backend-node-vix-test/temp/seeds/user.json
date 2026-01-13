@@ -1,0 +1,23 @@
+[
+  {
+    "username": "Admin",
+    "email": "admin@vituax.com",
+    "password": "Admin@123",
+    "role": "admin",
+    "isActive": true
+  },
+  {
+    "username": "Manager",
+    "email": "manager@vituax.com",
+    "password": "Manager@123",
+    "role": "manager",
+    "isActive": true
+  },
+  {
+    "username": "Member",
+    "email": "member@vituax.com",
+    "password": "Member@123",
+    "role": "member",
+    "isActive": true
+  }
+]

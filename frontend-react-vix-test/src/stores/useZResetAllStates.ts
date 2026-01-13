@@ -3,6 +3,7 @@ import { useZGlobalVar } from "./useZGlobalVar";
 import { useZMyVMsList } from "./useZMyVMsList";
 import { useZUserProfile } from "./useZUserProfile";
 import { useZVM } from "./useZVM";
+import { useCallback } from "react";
 
 export const useZResetAllStates = () => {
   const { resetAll: resetAllStates } = useZUserProfile();
@@ -12,12 +13,18 @@ export const useZResetAllStates = () => {
   const { resetAll: resetAllStatesVM } = useZVM();
 
   return {
-    resetAllStates: () => {
+    resetAllStates: useCallback(() => {
       resetAllStates();
       resetAllStatesBrand();
       resetAllStatesGlobal();
       resetAllStatesMyVMs();
       resetAllStatesVM();
-    },
+    }, [
+      resetAllStates,
+      resetAllStatesBrand,
+      resetAllStatesGlobal,
+      resetAllStatesMyVMs,
+      resetAllStatesVM,
+    ]),
   };
 };
