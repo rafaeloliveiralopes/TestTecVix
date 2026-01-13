@@ -43,7 +43,9 @@ Table vM {
   vCPU Int [not null]
   ram Int [not null]
   disk Int [not null]
+  pass String
   hasBackup Boolean [default: false]
+  location ETaskLocation
   idBrandMaster Int
   status EVMStatus
   createdAt DateTime [default: `now()`]
@@ -73,6 +75,11 @@ Enum EVMStatus {
   RUNNING
   STOPPED
   PAUSED
+}
+
+Enum ETaskLocation {
+  bre_barueri
+  usa_miami
 }
 
 Enum ERole {
