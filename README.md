@@ -98,10 +98,10 @@ Ao finalizar o teste, você deve:
 
 Antes de enviar, certifique-se de que:
 
-- [ ] O código está no **seu repositório pessoal** do GitHub
-- [ ] O repositório está configurado como **público** (não privado)
-- [ ] A branch `main` contém o projeto original
-- [ ] A branch `release` contém todas as suas modificações
+- [x] O código está no **seu repositório pessoal** do GitHub
+- [x] O repositório está configurado como **público** (não privado)
+- [x] A branch `main` contém o projeto original
+- [x] A branch `release` contém todas as suas modificações
 - [ ] Existe um Pull Request da `release` para a `main` **no seu repositório**
 - [ ] O README está atualizado com suas modificações
 - [ ] O projeto está funcionando corretamente
@@ -452,29 +452,29 @@ git commit -m "docs: atualiza README com credenciais de teste"
 
 ### 📋 Configuração Inicial
 
-- [ ] Criar arquivo `.env` baseado no `.env.example` (backend)
-- [ ] Criar arquivo `.env` baseado no `.env.exemple` (frontend)
+- [x] Criar arquivo `.env` baseado no `.env.example` (backend)
+- [x] Criar arquivo `.env` baseado no `.env.exemple` (frontend)
 
 ---
 
 ### 🔐 Autenticação e Autorização
 
-- [ ] Implementar as rotas de CRUD para usuários
-- [ ] Implementar rota de login do usuário
-- [ ] Implementar tela de login `/login`
-- [ ] Implementar rota de register do usuário
-- [ ] Implementar tela de register `/register`
-- [ ] Implementar autenticação com token JWT
-- [ ] Proteger as rotas da aplicação (exceto login e register) para que somente usuários logados possam acessar
+- [x] Implementar as rotas de CRUD para usuários
+- [x] Implementar rota de login do usuário
+- [x] Implementar tela de login `/login`
+- [x] Implementar rota de register do usuário
+- [x] Implementar tela de register `/register`
+- [x] Implementar autenticação com token JWT
+- [x] Proteger as rotas da aplicação (exceto login e register) para que somente usuários logados possam acessar
 - [ ] Adicionar credenciais de usuários de teste no README e/ou `.env.example`
 
 ---
 
 ### 🗄️ Updates no Banco de Dados
 
-- [ ] Adicionar coluna `pass` na tabela `VM` (senha da VM, respeitando regras de segurança)
-- [ ] Adicionar coluna `location` do tipo `ETaskLocation` na tabela `VM`
-- [ ] Adicionar coluna `hasBackup` na tabela `VM`
+- [x] Adicionar coluna `pass` na tabela `VM` (senha da VM, respeitando regras de segurança)
+- [x] Adicionar coluna `location` do tipo `ETaskLocation` na tabela `VM`
+- [x] Adicionar coluna `hasBackup` na tabela `VM`
 
 ---
 
