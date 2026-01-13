@@ -52,12 +52,29 @@ async function main() {
                 return {
                   ...item,
                   idUser: item?.idUser || randomUUID(),
-                  password: isHashed ? password : await bcrypt.hash(password, 10),
+                  password: isHashed
+                    ? password
+                    : await bcrypt.hash(password, 10),
                   isActive: item?.isActive ?? true,
                 };
               }),
             )
-          : data;
+          : table === "vM"
+            ? await Promise.all(
+                data.map(async (item) => {
+                  const pass = String(item?.pass ?? "");
+                  if (!pass) return item;
+                  const isHashed =
+                    pass.startsWith("$2a$") ||
+                    pass.startsWith("$2b$") ||
+                    pass.startsWith("$2y$");
+                  return {
+                    ...item,
+                    pass: isHashed ? pass : await bcrypt.hash(pass, 10),
+                  };
+                }),
+              )
+            : data;
       // @ts-expect-error ts(2349)
       await prisma[table].createMany({ data: preparedData });
     } catch (error) {
