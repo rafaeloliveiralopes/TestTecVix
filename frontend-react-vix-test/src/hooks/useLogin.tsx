@@ -8,7 +8,7 @@ import { useZResetAllStates } from "../stores/useZResetAllStates";
 
 interface IUserLoginResponse {
   token: string | null;
-  user: {
+  user?: {
     createdAt: string | Date;
     deletedAt: string | Date | null;
     email: string;
@@ -23,6 +23,25 @@ interface IUserLoginResponse {
   };
 }
 
+type TJwtPayload = {
+  idUser?: number;
+  role?: "admin" | "manager" | "member";
+  [key: string]: unknown;
+};
+
+const decodeJwtPayload = (token: string): TJwtPayload | null => {
+  try {
+    const parts = token.split(".");
+    if (parts.length < 2) return null;
+    const base64Url = parts[1];
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    const padded = base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), "=");
+    const json = atob(padded);
+    return JSON.parse(json) as TJwtPayload;
+  } catch {
+    return null;
+  }
+};
 
 export const useLogin = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -42,17 +61,17 @@ export const useLogin = () => {
     email: string;
   }) => {
     setIsLoading(true);
-    if ((!username && !email) || !password) {
+    const loginEmail = (email || username || "").trim();
+    if (!loginEmail || !password) {
       setIsLoading(false);
       return;
     }
 
     const response = await api.post<IUserLoginResponse>({
-      url: "/user/login",
+      url: "/auth/login",
       data: {
-        username: username || undefined,
+        email: loginEmail,
         password,
-        email: email || undefined,
       },
       tryRefetch: true,
     });
@@ -62,22 +81,41 @@ export const useLogin = () => {
       toast.error(response.message);
       return;
     }
-    if (!response.data.user?.isActive) {
+
+    if (!response.data?.token) {
+      toast.error("Missing token");
+      return;
+    }
+
+    const payload = decodeJwtPayload(response.data.token);
+
+    if (response.data.user && !response.data.user?.isActive) {
       setIsOpenModalUserNotActive(true);
       return;
     }
 
-    setUser({
-      idUser: response.data.user.idUser,
-      profileImgUrl: response.data.user.profileImgUrl,
-      username: response.data.user.username,
-      userEmail: response.data.user.email,
-      idBrand: response.data.user.idBrandMaster,
-      token: response.data.token,
-      role: response.data.user.role,
-      userPhoneNumber: response.data.user.userPhoneNumber,
-    });
+    setUser(
+      response.data.user
+        ? {
+            idUser: response.data.user.idUser,
+            profileImgUrl: response.data.user.profileImgUrl,
+            username: response.data.user.username,
+            userEmail: response.data.user.email,
+            idBrand: response.data.user.idBrandMaster,
+            token: response.data.token,
+            role: response.data.user.role,
+            userPhoneNumber: response.data.user.userPhoneNumber,
+          }
+        : {
+            token: response.data.token,
+            userEmail: loginEmail,
+            username: username || null,
+            idUser: typeof payload?.idUser === "number" ? payload.idUser : null,
+            role: payload?.role || null,
+          },
+    );
     setLoginTime(new Date());
+    navigate("/");
   };
 
   const goLogout = () => {
