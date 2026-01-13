@@ -10,7 +10,7 @@ import { WhiteLabelRouter } from "./WhiteLabelRouter";
 export const mainRoutes = [
   DefaultRouter,
   HomeRouter,
-  // LoginRouter, // Descomentar para renderizar o login
+  LoginRouter,
   RegisterRouter,
   VirtualMachineRouter,
   MyVMsRouter,

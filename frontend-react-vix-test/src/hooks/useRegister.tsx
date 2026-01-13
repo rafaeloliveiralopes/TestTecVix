@@ -52,7 +52,6 @@ export const useRegister = () => {
         username,
         password,
         email,
-        role: "admin",
         ...(idBrand != null ? { idBrandMaster: idBrand } : {}),
       },
     });
