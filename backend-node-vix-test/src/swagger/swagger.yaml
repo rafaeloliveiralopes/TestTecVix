@@ -6,11 +6,846 @@ info:
 servers:
   - url: "{{url}}"
 paths:
+  /api/v1/auth/register:
+    post:
+      tags: [Auth]
+      summary: Registrar usuário
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserCreateRequest"
+            example:
+              username: "novouser"
+              email: "novouser@example.com"
+              password: "SenhaForte@123"
+              role: "member"
+      responses:
+        "201":
+          description: Usuário criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        "400":
+          description: Erro de validação
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "409":
+          description: Conflito (email/username já existe)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+  /api/v1/auth/login:
+    post:
+      tags: [Auth]
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+            example:
+              email: "admin@vituax.com"
+              password: "Admin@123"
+      responses:
+        "200":
+          description: Token JWT
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "400":
+          description: Erro de validação
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "401":
+          description: Credenciais inválidas
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+  /api/v1/users:
+    get:
+      tags: [Users]
+      summary: Listar usuários
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Lista de usuários
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserResponse"
+        "401":
+          description: Não autenticado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+    post:
+      tags: [Users]
+      summary: Criar usuário (manager/admin)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserCreateRequest"
+      responses:
+        "201":
+          description: Usuário criado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        "401":
+          description: Não autenticado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "403":
+          description: Sem permissão
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+  /api/v1/users/{idUser}:
+    get:
+      tags: [Users]
+      summary: Buscar usuário por id
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: idUser
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Usuário
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        "401":
+          description: Não autenticado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+    put:
+      tags: [Users]
+      summary: Atualizar usuário (manager/admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: idUser
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserUpdateRequest"
+      responses:
+        "200":
+          description: Usuário atualizado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        "401":
+          description: Não autenticado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "403":
+          description: Sem permissão
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+    delete:
+      tags: [Users]
+      summary: Deletar usuário (admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: idUser
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Usuário deletado
+        "401":
+          description: Não autenticado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "403":
+          description: Sem permissão
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+  /api/v1/brand-master:
+    get:
+      tags: [brandMaster]
+      summary: Listar BrandMasters
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Lista de BrandMasters com paginação
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BrandMasterListResponse"
+        "401":
+          description: Não autenticado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+    post:
+      tags: [brandMaster]
+      summary: Criar BrandMaster (manager/admin)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/brandMaster"
+      responses:
+        "201":
+          description: BrandMaster criado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/brandMaster"
+        "401":
+          description: Não autenticado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "403":
+          description: Sem permissão
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+  /api/v1/brand-master/{idBrandMaster}:
+    get:
+      tags: [brandMaster]
+      summary: Buscar BrandMaster por id
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: idBrandMaster
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: BrandMaster
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/brandMaster"
+        "401":
+          description: Não autenticado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+    put:
+      tags: [brandMaster]
+      summary: Atualizar BrandMaster (manager/admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: idBrandMaster
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/brandMaster"
+      responses:
+        "200":
+          description: BrandMaster atualizado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/brandMaster"
+        "401":
+          description: Não autenticado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "403":
+          description: Sem permissão
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+    delete:
+      tags: [brandMaster]
+      summary: Deletar BrandMaster (admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: idBrandMaster
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: BrandMaster deletado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/brandMaster"
+        "401":
+          description: Não autenticado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "403":
+          description: Sem permissão
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+  /api/v1/brand-master/self:
+    get:
+      tags: [brandMaster]
+      summary: Obter BrandMaster "self"
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Sem implementação (retorna null)
+          content:
+            application/json:
+              schema:
+                nullable: true
+        "401":
+          description: Não autenticado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+  /api/v1/vm:
+    get:
+      tags: [VM]
+      summary: Listar VMs
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+        - in: query
+          name: page
+          schema:
+            type: integer
+        - in: query
+          name: offset
+          schema:
+            type: integer
+        - in: query
+          name: search
+          schema:
+            type: string
+        - in: query
+          name: status
+          schema:
+            type: string
+            nullable: true
+            enum: [RUNNING, STOPPED, PAUSED]
+      responses:
+        "200":
+          description: Lista de VMs com paginação
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VMListResponse"
+        "401":
+          description: Não autenticado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+    post:
+      tags: [VM]
+      summary: Criar VM (manager/admin)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VMCreateRequest"
+            example:
+              vmName: "VM Teste"
+              vCPU: 2
+              ram: 4
+              disk: 50
+              os: "debian12"
+              hasBackup: true
+              location: "bre_barueri"
+              pass: "AaBb!!12CcDd"
+      responses:
+        "201":
+          description: VM criada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VMResponse"
+        "400":
+          description: Erro de validação
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "401":
+          description: Não autenticado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "403":
+          description: Sem permissão
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+  /api/v1/vm/{idVM}:
+    get:
+      tags: [VM]
+      summary: Buscar VM por id
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: idVM
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: VM
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VMResponse"
+        "401":
+          description: Não autenticado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+    put:
+      tags: [VM]
+      summary: Atualizar VM (manager/admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: idVM
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VMUpdateRequest"
+      responses:
+        "200":
+          description: VM atualizada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VMResponse"
+        "400":
+          description: Erro de validação
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "401":
+          description: Não autenticado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "403":
+          description: Sem permissão
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "404":
+          description: Não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+    delete:
+      tags: [VM]
+      summary: Deletar VM (admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: idVM
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: VM deletada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VMResponse"
+        "401":
+          description: Não autenticado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "403":
+          description: Sem permissão
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "404":
+          description: Não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+  /api/v1/uploads/{objectName}:
+    get:
+      tags: [Uploads]
+      summary: Baixar arquivo por objectName
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: objectName
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Arquivo
+          content:
+            application/octet-stream: {}
+        "401":
+          description: Não autenticado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
 components:
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
+  schemas:
+    ErrorMessage:
+      type: object
+      properties:
+        message:
+          type: string
+    LoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+    UserCreateRequest:
+      type: object
+      required: [username, email, password]
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          description: Senha do usuário (mínimo 8 caracteres)
+        role:
+          type: string
+          enum: [admin, manager, member]
+        profileImgUrl:
+          type: string
+          nullable: true
+        idBrandMaster:
+          type: integer
+          nullable: true
+    UserUpdateRequest:
+      type: object
+      description: Atualização de usuário (campos sensíveis como password/role não são aceitos)
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        profileImgUrl:
+          type: string
+          nullable: true
+        idBrandMaster:
+          type: integer
+          nullable: true
+        isActive:
+          type: boolean
+    UserResponse:
+      type: object
+      properties:
+        idUser:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        profileImgUrl:
+          type: string
+          nullable: true
+        role:
+          type: string
+          enum: [admin, manager, member]
+        idBrandMaster:
+          type: integer
+          nullable: true
+        isActive:
+          type: boolean
+        lastLoginDate:
+          type: string
+          format: date-time
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+          nullable: true
+        updatedAt:
+          type: string
+          format: date-time
+          nullable: true
+        deletedAt:
+          type: string
+          format: date-time
+          nullable: true
+    VMCreateRequest:
+      type: object
+      required: [vCPU, ram, disk, pass, location]
+      properties:
+        vmName:
+          type: string
+          nullable: true
+        vCPU:
+          type: integer
+        ram:
+          type: integer
+        disk:
+          type: integer
+        os:
+          type: string
+          nullable: true
+        hasBackup:
+          type: boolean
+          default: false
+        location:
+          type: string
+          enum: [bre_barueri, usa_miami]
+        pass:
+          type: string
+          description: Senha da VM (regras de senha forte)
+        idBrandMaster:
+          type: integer
+          nullable: true
+        status:
+          type: string
+          enum: [RUNNING, STOPPED, PAUSED]
+          nullable: true
+        vmLocalization:
+          type: object
+          nullable: true
+          description: Alternativa ao campo `location` (quando enviado pelo frontend)
+          properties:
+            value:
+              type: string
+              enum: [bre_barueri, usa_miami]
+            label:
+              type: string
+              nullable: true
+    VMUpdateRequest:
+      type: object
+      properties:
+        vmName:
+          type: string
+          nullable: true
+        vCPU:
+          type: integer
+        ram:
+          type: integer
+        disk:
+          type: integer
+        os:
+          type: string
+          nullable: true
+        hasBackup:
+          type: boolean
+        location:
+          type: string
+          enum: [bre_barueri, usa_miami]
+        pass:
+          type: string
+          description: Se enviado, será salvo como hash
+        status:
+          type: string
+          enum: [RUNNING, STOPPED, PAUSED]
+          nullable: true
+        vmLocalization:
+          type: object
+          nullable: true
+          properties:
+            value:
+              type: string
+              enum: [bre_barueri, usa_miami]
+            label:
+              type: string
+              nullable: true
+    VMResponse:
+      type: object
+      description: Resposta não expõe a senha da VM (`pass`)
+      properties:
+        idVM:
+          type: integer
+        vmName:
+          type: string
+          nullable: true
+        vCPU:
+          type: integer
+        ram:
+          type: integer
+        disk:
+          type: integer
+        hasBackup:
+          type: boolean
+          nullable: true
+        location:
+          type: string
+          nullable: true
+          enum: [bre_barueri, usa_miami]
+        idBrandMaster:
+          type: integer
+          nullable: true
+        status:
+          type: string
+          nullable: true
+          enum: [RUNNING, STOPPED, PAUSED]
+        createdAt:
+          type: string
+          format: date-time
+          nullable: true
+        updatedAt:
+          type: string
+          format: date-time
+          nullable: true
+        deletedAt:
+          type: string
+          format: date-time
+          nullable: true
+        os:
+          type: string
+          nullable: true
+    VMListItem:
+      allOf:
+        - $ref: "#/components/schemas/VMResponse"
+        - type: object
+          properties:
+            brandMaster:
+              type: object
+              nullable: true
+              properties:
+                brandName:
+                  type: string
+                  nullable: true
+                brandLogo:
+                  type: string
+                  nullable: true
+    VMListResponse:
+      type: object
+      properties:
+        totalCount:
+          type: integer
+        result:
+          type: array
+          items:
+            $ref: "#/components/schemas/VMListItem"
+    BrandMasterListResponse:
+      type: object
+      properties:
+        totalCount:
+          type: integer
+        result:
+          type: array
+          items:
+            $ref: "#/components/schemas/brandMaster"
 tags:
+  - name: Auth
+  - name: Users
+  - name: Uploads
   - name: brandMaster
   - name: VM

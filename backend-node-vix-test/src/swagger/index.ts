@@ -49,9 +49,24 @@ const swaggerDocs = {
 } as { paths: object; tags: Array<unknown>; components: object };
 swaggerDocs.paths = swaggerYamlDocs.paths;
 swaggerDocs.tags = swaggerYamlDocs.tags;
+
+const baseComponents = (swaggerDocs.components || {}) as Record<string, unknown>;
+const yamlComponents = (swaggerYamlDocs?.components || {}) as Record<
+  string,
+  unknown
+>;
+
 swaggerDocs.components = {
-  ...swaggerDocs.components,
-  ...swaggerYamlDocs.components,
+  ...baseComponents,
+  ...yamlComponents,
+  schemas: {
+    ...((baseComponents.schemas as Record<string, unknown>) || {}),
+    ...((yamlComponents.schemas as Record<string, unknown>) || {}),
+  },
+  securitySchemes: {
+    ...((baseComponents.securitySchemes as Record<string, unknown>) || {}),
+    ...((yamlComponents.securitySchemes as Record<string, unknown>) || {}),
+  },
 };
 
 export const setupSwagger = (app: Express): void => {

@@ -22,8 +22,8 @@ app.use(express.urlencoded({ limit: "100mb", extended: true }));
 
 app.use(express.static("public"));
 app.use(logs);
-app.use(routes);
 setupSwagger(app);
+app.use(routes);
 app.use(notImplemented);
 app.use(errorHandler as unknown as ErrorRequestHandler);
 
