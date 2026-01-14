@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { api } from "../services/api";
 import { IListAll } from "../types/ListAllTypes";
 import { toast } from "react-toastify";
@@ -23,52 +23,63 @@ export const useListVms = () => {
   const { goLogout } = useLogin();
   const { getAuth } = useAuth();
 
-  const fetchListVms = async (
-    params: {
-      status?: string;
-      page?: number;
-      limit?: number;
-      search?: string;
-      idBrandMaster?: number;
-    } = {},
-  ) => {
-    const auth = await getAuth();
-    setIsLoading(true);
-    const response = await api.get<IListAll<IVMCreatedResponse>>({
-      url: "/vm",
-      auth,
+  const fetchListVms = useCallback(
+    async (
       params: {
-        ...Object.fromEntries(
-          Object.entries(params).filter(([, value]) => value != null),
-        ),
-        //status: "PAUSED", // "RUNNING", "STOPPED", "PAUSED", "null", undefined
-      },
-    });
+        status?: string;
+        page?: number;
+        limit?: number;
+        search?: string;
+        idBrandMaster?: number | null;
+      } = {},
+    ) => {
+      const auth = await getAuth();
+      setIsLoading(true);
+      const response = await api.get<IListAll<IVMCreatedResponse>>({
+        url: "/vm",
+        auth,
+        params: {
+          ...Object.fromEntries(
+            Object.entries(params).filter(([, value]) => value != null),
+          ),
+          //status: "PAUSED", // "RUNNING", "STOPPED", "PAUSED", "null", undefined
+        },
+      });
 
-    setIsLoading(false);
-    if (response.error) {
-      if (!response.message.includes("expired")) toast.error(response.message);
-      setVmList([]);
-      setVmTotalCount(0);
-      setTotalCountVMs(0);
-      goLogout();
-      return;
-    }
+      setIsLoading(false);
+      if (response.error) {
+        if (!response.message.includes("expired")) toast.error(response.message);
+        setVmList([]);
+        setVmTotalCount(0);
+        setTotalCountVMs(0);
+        goLogout();
+        return;
+      }
 
-    setVmList(response.data?.result);
-    setVmTotalCount(response.data?.totalCount);
-    setTotalCountVMs(response.data?.totalCount);
+      setVmList(response.data?.result);
+      setVmTotalCount(response.data?.totalCount);
+      setTotalCountVMs(response.data?.totalCount);
 
-    if (!currentIdVM && response.data?.result.length) {
-      setCurrentIdVM(response.data?.result[0].idVM);
-      setCurrentVMName(response.data?.result[0].vmName);
-      setCurrentVMOS(response.data?.result[0].os);
-    }
-  };
+      if (!currentIdVM && response.data?.result.length) {
+        setCurrentIdVM(response.data?.result[0].idVM);
+        setCurrentVMName(response.data?.result[0].vmName);
+        setCurrentVMOS(response.data?.result[0].os);
+      }
+    },
+    [
+      currentIdVM,
+      getAuth,
+      goLogout,
+      setCurrentIdVM,
+      setCurrentVMName,
+      setCurrentVMOS,
+      setTotalCountVMs,
+    ],
+  );
 
   useEffect(() => {
     fetchListVms({ idBrandMaster: idBrand, limit: 20 });
-  }, []);
+  }, [fetchListVms, idBrand]);
 
   return { vmList, vmTotalCount, isLoading, fetchListVms };
 };
