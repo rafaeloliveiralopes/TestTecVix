@@ -6,7 +6,7 @@ import { TableComponent } from "./components/Table";
 import CustomPagination from "../../components/Pagination/CustomPagination";
 import { useZMyVMsList } from "../../stores/useZMyVMsList";
 import { useMyVMList } from "../../hooks/useMyVMList";
-import { useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useZUserProfile } from "../../stores/useZUserProfile";
 import { useZGlobalVar } from "../../stores/useZGlobalVar";
 import { useWindowSize } from "../../hooks/useWindowSize";
@@ -41,10 +41,20 @@ export const MyVMsPage = () => {
   const { updateThisVm, setUpdateThisVm } = useZGlobalVar();
   const { socketRef } = useZGlobalVar();
 
-  const handlerFetchVMList = async (page: number = 0) => {
-    const { totalCount, vmList } = await fetchMyVmsList({
+  // Colocar `isLoading` nas deps dos `useEffect` tem alternado durante fetches e pode
+  // causar loop de refetch / "piscada" na UI. Por isso lemos o valor via `ref`.
+  const isLoadingRef = useRef(isLoading);
+
+  useEffect(() => {
+    isLoadingRef.current = isLoading;
+  }, [isLoading]);
+
+  const fetchVMList = useCallback(
+    async (pageToFetch: number) => {
+      // Função memoizada para poder ser usada com segurança nas deps dos `useEffect`.
+      const { totalCount, vmList } = await fetchMyVmsList({
       search,
-      page: page || currentPage - 1 || 0,
+      page: pageToFetch,
       orderBy: orderBy ? `${orderBy}:${order}` : undefined,
       limit,
       idBrandMaster: idBrand,
@@ -52,55 +62,87 @@ export const MyVMsPage = () => {
     });
     setVMList(vmList);
     setTotalCount(totalCount);
-    if (isFirstLoading) setIsFirstLoading(false);
-  };
+    setIsFirstLoading(false);
+    },
+    [
+      fetchMyVmsList,
+      idBrand,
+      limit,
+      order,
+      orderBy,
+      search,
+      setIsFirstLoading,
+      setTotalCount,
+      setVMList,
+      status,
+    ],
+  );
 
-  const onCloseAndEditVM = (edit: boolean) => {
-    if (edit) handlerFetchVMList();
-    setCurrentVM(null);
-  };
+  const fetchCurrentPage = useCallback(() => {
+    // Centraliza o cálculo de página (API usa índice 0-based).
+    return fetchVMList(Math.max(currentPage - 1, 0));
+  }, [currentPage, fetchVMList]);
+
+  const onCloseAndEditVM = useCallback(
+    (edit: boolean) => {
+      if (edit) fetchCurrentPage();
+      setCurrentVM(null);
+    },
+    [fetchCurrentPage, setCurrentVM],
+  );
 
   useEffect(() => {
-    if (isLoading) return;
+    // Fetch inicial / refetch ao mudar filtros.
+    if (isLoadingRef.current) return;
     setCurrentPage(1);
-    handlerFetchVMList();
-  }, [search, order, orderBy, selectedMSP, status, onlyMyVMs]);
+    fetchVMList(0);
+  }, [
+    fetchVMList,
+    onlyMyVMs,
+    order,
+    orderBy,
+    search,
+    selectedMSP,
+    setCurrentPage,
+    status,
+  ]);
 
   useEffect(() => {
+    // Fetch ao paginar.
     if (isOpenSideBar) return;
-    if (isLoading) return;
-    handlerFetchVMList(currentPage - 1);
-  }, [currentPage]);
+    if (isLoadingRef.current) return;
+    fetchCurrentPage();
+  }, [fetchCurrentPage, isOpenSideBar]);
 
   useEffect(() => {
+    // Recarrega a lista após sinal de atualização de VM.
     if (isOpenSideBar) return;
-    if (isLoading) return;
+    if (isLoadingRef.current) return;
     if (!updateThisVm) return;
     const vmToUpdate = vmList.find((vm) => vm.idVM === updateThisVm);
     setUpdateThisVm(null);
     if (vmToUpdate) {
-      handlerFetchVMList();
+      fetchCurrentPage();
     }
-  }, [updateThisVm, isOpenSideBar, isLoading]);
+  }, [
+    fetchCurrentPage,
+    isOpenSideBar,
+    setUpdateThisVm,
+    updateThisVm,
+    vmList,
+  ]);
 
   useEffect(() => {
     if (!socketRef.connected) return;
-    socketRef.on("updateTask", () => {
-      handlerFetchVMList();
-    });
-    return () => {
-      socketRef.off("updateTask");
+    // Usa handler com referência estável para não acumular listeners em rerenders.
+    const onUpdateTask = () => {
+      fetchCurrentPage();
     };
-  }, [
-    socketRef,
-    currentPage,
-    search,
-    order,
-    orderBy,
-    selectedMSP,
-    status,
-    onlyMyVMs,
-  ]);
+    socketRef.on("updateTask", onUpdateTask);
+    return () => {
+      socketRef.off("updateTask", onUpdateTask);
+    };
+  }, [fetchCurrentPage, socketRef]);
 
   return (
     <ScreenFullPage
