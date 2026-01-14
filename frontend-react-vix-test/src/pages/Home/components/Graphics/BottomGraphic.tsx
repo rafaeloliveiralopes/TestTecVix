@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo } from "react";
 import {
   Line,
   XAxis,
@@ -17,9 +17,22 @@ import { useTranslation } from "react-i18next";
 
 import { useZGlobalVar } from "../../../../stores/useZGlobalVar";
 import { IFormatData } from "../../../../types/socketType";
+import { buildMockTimeSeries } from "../../../../utils/buildMockTimeSeries";
 
 export const BottomGraphic = () => {
-  const [chartData] = useState<IFormatData[]>([]);
+  const { currentIdVM, currentVMName: vmName } = useZGlobalVar();
+  const chartData = useMemo<IFormatData[]>(() => {
+    if (!currentIdVM) return [];
+
+    // Mock do gráfico de Memória: série temporal determinística baseada no `currentIdVM` (Gráfico mocado).
+    return buildMockTimeSeries({
+      seed: currentIdVM + 101, // offset simples para diferenciar da série de CPU
+      initialMin: 20,
+      initialMax: 75,
+      jitter: 12,
+      decimals: 2,
+    });
+  }, [currentIdVM]);
   const { theme, mode } = useZTheme();
   const { t } = useTranslation();
 
@@ -27,7 +40,6 @@ export const BottomGraphic = () => {
     Number(chartData[chartData.length - 1]?.value.toFixed(2)) || 0;
 
   const valueColor = lastMemoryData < 80 ? theme[mode].ok : theme[mode].danger;
-  const { currentVMName: vmName } = useZGlobalVar();
 
   // if (!chartData.length) return <EmptyFeedBack />;
 
