@@ -503,7 +503,7 @@ git commit -m "docs: atualiza README com credenciais de teste"
 
 - [x] Implementar filtro de **pesquisa** (busca por nome)
 - [x] Implementar filtro por **status da VM**
-- [ ] Implementar filtro por **MSP/BrandMaster**
+- [x] Implementar filtro por **MSP/BrandMaster**
 - [ ] Implementar filtro **"Apenas minhas VMs"** (VMs exclusivas da mesma BrandMaster do usuário logado)
 
 **Ações:**
