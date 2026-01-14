@@ -14,7 +14,7 @@ export const useMyVMList = () => {
       status?: string;
       page?: number;
       limit?: number;
-      search?: string;
+      search?: string | null;
       orderBy?: string; // field_name:asc or field_name:desc
       idBrandMaster?: number | "null";
     } = {},
@@ -25,7 +25,9 @@ export const useMyVMList = () => {
       url: "/vm",
       auth,
       params: {
-        ...params,
+        ...Object.fromEntries(
+          Object.entries(params).filter(([, value]) => value !== null),
+        ),
         //status: "PAUSED", // "RUNNING", "STOPPED", "PAUSED", "null", undefined
       },
     });
