@@ -68,8 +68,10 @@ export const Header = () => {
   }, []);
 
   const handleSearch = (value: string) => {
-    if (value === search) return;
-    setSearch(value.trim());
+    const normalized = value.trim();
+    const nextValue = normalized.length ? normalized : null;
+    if (nextValue === search) return;
+    setSearch(nextValue);
   };
 
   const getStatusTag = (status: string) => {
