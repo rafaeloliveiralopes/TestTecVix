@@ -77,6 +77,7 @@ export const VmCard = ({
   const {
     updateNameVm,
     updateDiskSizeVm,
+    updateVMStatus,
     getVMById: getVMByIdResource,
     isLoading,
     getOS,
@@ -108,23 +109,45 @@ export const VmCard = ({
 
   const handleConfirm = async () => {
     if (statusState !== preStatusState) {
-      setPreStatusState(statusState);
+      const nextStatus = statusState;
+      if (
+        nextStatus !== "RUNNING" &&
+        nextStatus !== "STOPPED" &&
+        nextStatus !== "PAUSED"
+      ) {
+        setStatusState(preStatusState);
+        setShowConfirmation(false);
+        return;
+      }
 
+      // Persiste na API a ação do card (iniciar/pausar) atualizando o status da VM
+      const updated = await updateVMStatus({
+        idVM: vmId,
+        // Enum de status aceito pela API/validação do backend.
+        status: nextStatus as "RUNNING" | "STOPPED" | "PAUSED",
+      });
+      if (!updated) {
+        setStatusState(preStatusState);
+        setShowConfirmation(false);
+        return;
+      }
+
+      setPreStatusState(nextStatus);
       await getVMById();
     }
     setShowConfirmation(false);
   };
 
   const handlePaused = () => {
+    if (!checkStatus(preStatusState, taskState?.action).isRunning) return;
     setStatusState("PAUSED");
-    if (checkStatus(statusState, taskState?.action).isRunning)
-      setShowConfirmation(true);
+    setShowConfirmation(true);
   };
 
   const handleStart = () => {
+    if (checkStatus(preStatusState, taskState?.action).isRunning) return;
     setStatusState("RUNNING");
-    if (!checkStatus(statusState, taskState?.action).isRunning)
-      setShowConfirmation(true);
+    setShowConfirmation(true);
   };
 
   const closeModalWarning = () => {
