@@ -18,6 +18,7 @@ export const Header = () => {
   const { theme, mode } = useZTheme();
   const {
     search,
+    status,
     setSearch,
     setStatus,
     setOnlyMyVMs,
@@ -106,6 +107,33 @@ export const Header = () => {
     );
   };
 
+  // Mantém o dropdown de status controlado e sincronizado com o store (`status`).
+  const statusOptions = [
+    {
+      label: t("myVMs.actives"),
+      value: "RUNNING",
+      tag: getStatusTag("RUNNING"),
+    },
+    {
+      label: t("myVMs.inactives"),
+      value: "STOPPED",
+      tag: getStatusTag("STOPPED"),
+    },
+    {
+      label: t("myVMs.waiting"),
+      value: "null",
+      tag: getStatusTag("null"),
+    },
+    {
+      label: t("myVMs.paused"),
+      value: "PAUSED",
+      tag: getStatusTag("PAUSED"),
+    },
+  ];
+
+  const selectedStatusOption =
+    statusOptions.find((option) => option.value === status) || null;
+
   return (
     <Stack
       sx={{
@@ -143,28 +171,8 @@ export const Header = () => {
         }}
       >
         <DropDown
-          data={[
-            {
-              label: t("myVMs.actives"),
-              value: "RUNNING",
-              tag: getStatusTag("RUNNING"),
-            },
-            {
-              label: t("myVMs.inactives"),
-              value: "STOPPED",
-              tag: getStatusTag("STOPPED"),
-            },
-            {
-              label: t("myVMs.waiting"),
-              value: "null",
-              tag: getStatusTag("null"),
-            },
-            {
-              label: t("myVMs.paused"),
-              value: "PAUSED",
-              tag: getStatusTag("PAUSED"),
-            },
-          ]}
+          data={statusOptions}
+          value={selectedStatusOption}
           onChange={(val) => {
             setStatus((val?.value as string) || undefined);
           }}
