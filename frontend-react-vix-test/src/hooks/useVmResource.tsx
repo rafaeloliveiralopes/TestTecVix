@@ -73,6 +73,15 @@ export const useVmResource = () => {
     },
   ];
 
+  // Padrão do projeto: o `os` das VMs é um código (ex: `ubuntu2404`, `debian12`).
+  // O dropdown usa como fonte os valores já padronizados no enum `EOS`.
+  const osOptions: { value: EOS; label: string }[] = (Object.values(EOS) as EOS[])
+    .filter((os) => os !== EOS.notFound)
+    .map((os) => ({
+      value: os,
+      label: os,
+    }));
+
   const localizationOptions: { value: ETaskLocation; label: string }[] = [
     {
       value: ETaskLocation.usa_miami,
@@ -131,6 +140,9 @@ export const useVmResource = () => {
       url: "/vm",
       data: {
         ...vm,
+        // Garante vínculo com o BrandMaster do usuário logado quando o frontend não envia esse valor.
+        idBrandMaster:
+          vm.idBrandMaster !== undefined ? vm.idBrandMaster : idBrand ?? null,
       },
       auth,
     });
@@ -335,6 +347,7 @@ export const useVmResource = () => {
     getOS,
     getNetworkType,
     storageOptions,
+    osOptions,
     localizationOptions,
     isLoading,
     networkTypeOptions,

@@ -32,11 +32,14 @@ export const SugestionsCards = () => {
         sx={{
           flexDirection: "row",
           gap: "8px",
+          flexWrap: "wrap",
         }}
       >
+        {/* Mostra disco (GB) nos cards de sugestão para ficar consistente com o que será aplicado no formulário. */}
         <CardSugestion
           cpu={4}
           ram={8}
+          disk={250}
           onClick={() =>
             setVmSugestion({ os: EOS.ubuntu2404, vCPU: 4, ram: 8, disk: 250 })
           }
@@ -46,6 +49,7 @@ export const SugestionsCards = () => {
         <CardSugestion
           cpu={8}
           ram={16}
+          disk={512}
           onClick={() =>
             setVmSugestion({ os: EOS.ubuntu2404, vCPU: 8, ram: 16, disk: 512 })
           }
