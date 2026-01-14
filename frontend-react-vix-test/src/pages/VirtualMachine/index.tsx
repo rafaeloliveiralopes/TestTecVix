@@ -96,16 +96,16 @@ export const VirtualMachinePage = () => {
           {/* Sugestions */}
           <Stack
             sx={{
-              display: "none",
               backgroundColor: theme[mode].mainBackground,
               boxShadow: `0px 4px 4px 0px ${shadow(mode)}`,
               borderRadius: "16px",
-              maxHeight: "530px",
               "@media (min-width: 1431px)": {
-                display: "block",
+                maxHeight: "530px",
+                overflowY: "auto",
               },
             }}
           >
+            {/* Mantém as sugestões visíveis em telas menores (responsivo). */}
             <SugestionsCards />
           </Stack>
           {/* IA modal card */}

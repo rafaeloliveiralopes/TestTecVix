@@ -32,6 +32,7 @@ export const SugestionsCards = () => {
         sx={{
           flexDirection: "row",
           gap: "8px",
+          flexWrap: "wrap",
         }}
       >
         {/* Mostra disco (GB) nos cards de sugestão para ficar consistente com o que será aplicado no formulário. */}

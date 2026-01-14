@@ -81,6 +81,7 @@ export const CardSugestion = ({
         sx={{
           flexDirection: "row",
           gap: "8px",
+          flexWrap: "wrap",
         }}
       >
         {/* CPU */}
@@ -165,13 +166,13 @@ export const CardSugestion = ({
             sx={{
               backgroundColor: "transparent",
               borderRadius: "4px",
-              width: "72px",
+              width: "80px",
               height: "20px",
               alignItems: "center",
               padding: "2px 4px",
               border: `1px solid ${theme[mode].black}`,
             }}
-          >
+            >
             <TextRob12Font2Xs
               sx={{
                 color: theme[mode].black,
