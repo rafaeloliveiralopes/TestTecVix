@@ -22,7 +22,7 @@ export const VirtualMachinePage = () => {
       resetAll();
       newRandomPassword();
     };
-  }, []);
+  }, [newRandomPassword, resetAll]);
 
   return (
     <ScreenFullPage

@@ -129,16 +129,28 @@ export const FormVM = () => {
     if (sugestionVCPU) setVmvCpu(sugestionVCPU);
     if (sugestionRAM) setVmMemory(sugestionRAM);
     if (sugestionDisk) setVmDisk(sugestionDisk);
-  }, [sugestionOS, sugestionVCPU, sugestionRAM, sugestionDisk]);
+  }, [
+    setVmDisk,
+    setVmMemory,
+    setVmSO,
+    setVmvCpu,
+    sugestionDisk,
+    sugestionOS,
+    sugestionRAM,
+    sugestionVCPU,
+  ]);
 
   useEffect(() => {
     if (!vmNetwork) {
       setVmNetwork(networkTypeOptions[0]);
     }
+  }, [networkTypeOptions, setVmNetwork, vmNetwork]);
+
+  useEffect(() => {
     return () => {
       resetAll();
     };
-  }, []);
+  }, [resetAll]);
 
   return (
     <>
