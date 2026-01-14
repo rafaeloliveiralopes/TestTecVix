@@ -140,6 +140,9 @@ export const useVmResource = () => {
       url: "/vm",
       data: {
         ...vm,
+        // Garante vínculo com o BrandMaster do usuário logado quando o frontend não envia esse valor.
+        idBrandMaster:
+          vm.idBrandMaster !== undefined ? vm.idBrandMaster : idBrand ?? null,
       },
       auth,
     });
