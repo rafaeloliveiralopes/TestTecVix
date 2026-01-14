@@ -576,8 +576,27 @@ git commit -m "docs: atualiza README com credenciais de teste"
 
 #### Documentação Swagger
 
-- [ ] Fazer a **documentação Swagger da API**
-- [ ] Verificar a rota `/docs` na API para visualizar a documentação
+- [x] Fazer a **documentação Swagger da API**
+- [x] Verificar a rota `/docs` na API para visualizar a documentação
+
+#### Passos para visualizar a documentação
+
+```bash
+cd backend-node-vix-test
+```
+
+```bash
+npm run build
+```
+
+```bash
+PORT=3010 node dist/index.js
+```
+**Cole no navegador o link**
+
+```text
+http://localhost:3010/docs/
+```
 
 ---
 
