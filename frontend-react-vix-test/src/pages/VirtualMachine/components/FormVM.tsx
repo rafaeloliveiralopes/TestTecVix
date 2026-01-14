@@ -36,6 +36,8 @@ export const FormVM = () => {
     setVmMemory,
     vmDisk,
     setVmDisk,
+    vmStorageType,
+    setVmStorageType,
     vmLocalization,
     setVmLocalization,
     hasBackup,
@@ -64,10 +66,6 @@ export const FormVM = () => {
     resetAll,
   } = useZVMSugestion();
 
-  const vmStorageType = {
-    value: "ssd",
-    label: "SSD",
-  };
   const handleCancel = () => {
     setVmPassword(genStrongPass(MIN_PASS_SIZE));
     setVmName("");
@@ -78,6 +76,8 @@ export const FormVM = () => {
     setVmLocalization(null);
     setHasBackup(false);
     setVmNetwork(networkTypeOptions[0]);
+    // Reseta o tipo de armazenamento para o padrão (primeira opção do dropdown).
+    setVmStorageType(storageOptions[0] ?? null);
   };
 
   const handleCreateVm = async () => {
@@ -118,7 +118,8 @@ export const FormVM = () => {
     !vmDisk ||
     !vmLocalization ||
     !vmPassword ||
-    !vmNetwork;
+    !vmNetwork ||
+    !vmStorageType;
 
   useEffect(() => {
     if (sugestionOS)
@@ -144,7 +145,18 @@ export const FormVM = () => {
     if (!vmNetwork) {
       setVmNetwork(networkTypeOptions[0]);
     }
-  }, [networkTypeOptions, setVmNetwork, vmNetwork]);
+    if (!vmStorageType) {
+      // Garante um valor inicial para o dropdown de armazenamento (SSD/HD).
+      setVmStorageType(storageOptions[0] ?? null);
+    }
+  }, [
+    networkTypeOptions,
+    setVmNetwork,
+    setVmStorageType,
+    storageOptions,
+    vmNetwork,
+    vmStorageType,
+  ]);
 
   useEffect(() => {
     return () => {
@@ -301,11 +313,10 @@ export const FormVM = () => {
             }}
           >
             <DropDowText
-              disabled
               label={t("createVm.storageType")}
               data={storageOptions}
               value={vmStorageType}
-              onChange={() => {}}
+              onChange={setVmStorageType}
               sxContainer={{
                 maxWidth: "180px",
               }}
