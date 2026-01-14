@@ -38,7 +38,9 @@ export const useListVms = () => {
       url: "/vm",
       auth,
       params: {
-        ...params,
+        ...Object.fromEntries(
+          Object.entries(params).filter(([, value]) => value != null),
+        ),
         //status: "PAUSED", // "RUNNING", "STOPPED", "PAUSED", "null", undefined
       },
     });

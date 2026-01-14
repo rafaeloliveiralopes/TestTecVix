@@ -52,12 +52,16 @@ export const MyVMsPage = () => {
   const fetchVMList = useCallback(
     async (pageToFetch: number) => {
       // Função memoizada para poder ser usada com segurança nas deps dos `useEffect`.
+      const selectedBrandMasterId = selectedMSP?.idBrandMaster;
+      const idBrandMasterToFetch =
+        selectedBrandMasterId != null ? selectedBrandMasterId : idBrand ?? undefined;
+
       const { totalCount, vmList } = await fetchMyVmsList({
       search,
       page: pageToFetch,
       orderBy: orderBy ? `${orderBy}:${order}` : undefined,
       limit,
-      idBrandMaster: idBrand,
+      idBrandMaster: idBrandMasterToFetch,
       status,
     });
     setVMList(vmList);
@@ -71,6 +75,7 @@ export const MyVMsPage = () => {
       order,
       orderBy,
       search,
+      selectedMSP,
       setIsFirstLoading,
       setTotalCount,
       setVMList,
