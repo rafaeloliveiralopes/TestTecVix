@@ -53,8 +53,12 @@ export const MyVMsPage = () => {
     async (pageToFetch: number) => {
       // Função memoizada para poder ser usada com segurança nas deps dos `useEffect`.
       const selectedBrandMasterId = selectedMSP?.idBrandMaster;
-      const idBrandMasterToFetch =
-        selectedBrandMasterId != null ? selectedBrandMasterId : idBrand ?? undefined;
+      const idBrandMasterToFetch: number | "null" | undefined =
+        selectedBrandMasterId != null
+          ? selectedBrandMasterId
+          : onlyMyVMs
+            ? (idBrand ?? "null")
+            : undefined;
 
       const { totalCount, vmList } = await fetchMyVmsList({
       search,
@@ -72,6 +76,7 @@ export const MyVMsPage = () => {
       fetchMyVmsList,
       idBrand,
       limit,
+      onlyMyVMs,
       order,
       orderBy,
       search,
