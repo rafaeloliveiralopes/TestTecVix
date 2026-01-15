@@ -531,8 +531,8 @@ git commit -m "docs: atualiza README com credenciais de teste"
 
 **Referências visuais**: `screenshots/CadastroDeMSPStep01.png` e `screenshots/CadastroDeMSPStep02.png`
 
-- [ ] Implementar componente para **cadastro de MSP em 2 etapas**
-- [ ] Possibilitar **criar um novo MSP**
+- [x] Implementar componente para **cadastro de MSP em 2 etapas**
+- [x] Possibilitar **criar um novo MSP**
 - [ ] Possibilitar **editar um MSP já existente**
 - [ ] Adicionar campos de **endereço** (ou puxar pelo CEP e/ou CNPJ)
 - [ ] Implementar filtros de **search**

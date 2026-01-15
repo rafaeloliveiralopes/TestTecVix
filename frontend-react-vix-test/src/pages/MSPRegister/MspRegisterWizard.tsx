@@ -572,22 +572,6 @@ export const MspRegisterWizard = ({
           <Divider sx={{ borderColor: theme[mode].grayLight }} />
 
           <Stack gap={"8px"}>
-            <InputLabelAndFeedback
-              value={""}
-              onChange={() => {}}
-              label={t("mspRegister.companyLogo")}
-              disabled
-              sx={{ display: "none" }}
-            />
-            <Box
-              sx={{
-                color: theme[mode].gray,
-                fontSize: "12px",
-                marginTop: "-8px",
-              }}
-            >
-              {t("mspRegister.companyLogoSubtitle")}
-            </Box>
             <LogoUploadCard
               title={t("mspRegister.companyLogo")}
               subtitle={t("mspRegister.companyLogoSubtitle")}
@@ -619,13 +603,16 @@ export const MspRegisterWizard = ({
               handleRestore={() => setActiveStep(0)}
               labelSave={t("mspRegister.confirm")}
               labelRestore={t("mspRegister.back")}
+              sx={{ flex: "1 1 684px" }}
               sxButtonSave={{
                 background: theme[mode].blue,
                 color: theme[mode].btnText,
+                whiteSpace: "nowrap",
               }}
               sxButtonRestore={{
                 color: theme[mode].blueDark,
                 borderColor: theme[mode].blueDark,
+                whiteSpace: "nowrap",
               }}
             />
             <Btn
