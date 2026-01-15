@@ -509,7 +509,7 @@ git commit -m "docs: atualiza README com credenciais de teste"
 **Ações:**
 
 - [x] Possibilitar **stop/start** da VM pela tabela
-- [ ] Possibilitar **stop/start** da VM pelo modal de edição
+- [x] Possibilitar **stop/start** da VM pelo modal de edição
 
 **Modal de Edição:**
 
