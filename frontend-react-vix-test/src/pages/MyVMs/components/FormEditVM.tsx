@@ -47,7 +47,7 @@ export const FormEditVM = ({ onClose }: IProps) => {
   const { statusHashMap } = useStatusInfo();
   const { currentVM, setCurrentVM, vmList, setVMList } = useZMyVMsList();
   const { setUpdateThisVm } = useZGlobalVar();
-  const [vmPassword, setVmPassword] = useState(currentVM.pass);
+  const [vmPassword, setVmPassword] = useState("");
   const [vmName, setVmName] = useState(currentVM.vmName);
   const [vmSO, setVmSO] = useState<TOptions>({
     label: currentVM.os,
@@ -60,9 +60,14 @@ export const FormEditVM = ({ onClose }: IProps) => {
     value: "ssd",
     label: "SSD",
   });
-  const [vmLocalization] = useState<TOptions>({
-    label: localizationOptions[0]?.label,
-    value: localizationOptions[0]?.value,
+  const [vmLocalization] = useState<TOptions>(() => {
+    const currentLocation = currentVM.location ?? localizationOptions[0]?.value;
+    const option =
+      localizationOptions.find((loc) => loc.value === currentLocation) ??
+      localizationOptions[0];
+
+    if (!option) return null;
+    return { label: option.label, value: option.value };
   });
   const [hasBackup, setHasBackup] = useState(currentVM.hasBackup);
 
@@ -78,7 +83,7 @@ export const FormEditVM = ({ onClose }: IProps) => {
   }, [currentVM.status]);
 
   const handleCancel = () => {
-    setVmPassword(currentVM.pass);
+    setVmPassword("");
     setVmName(currentVM.vmName);
     setVmSO({
       label: currentVM.os,
@@ -97,7 +102,6 @@ export const FormEditVM = ({ onClose }: IProps) => {
   const handleEditVm = async () => {
     const vm = {
       hasBackup,
-      vmPassword,
       vmName,
       vmSO,
       vmvCpu,
@@ -109,9 +113,12 @@ export const FormEditVM = ({ onClose }: IProps) => {
       oldVM: currentVM,
     };
     setOpenConfirm(false);
-    const isValidPass = validPassword(vmPassword);
-    if (!isValidPass) return;
-    await updateVM(
+    const normalizedPass = vmPassword.trim();
+    if (normalizedPass) {
+      const isValidPass = validPassword(normalizedPass);
+      if (!isValidPass) return;
+    }
+    const updated = await updateVM(
       {
         ...vm,
         vmName: vmName,
@@ -120,10 +127,11 @@ export const FormEditVM = ({ onClose }: IProps) => {
         disk: vmDisk,
         hasBackup: hasBackup,
         os: String(vmSO?.value) || "",
-        pass: vmPassword,
+        ...(normalizedPass ? { pass: normalizedPass } : {}),
       },
       currentVM.idVM,
     );
+    if (!updated) return;
     onClose(true);
   };
 
@@ -174,7 +182,6 @@ export const FormEditVM = ({ onClose }: IProps) => {
     !vmvCpu ||
     !vmMemory ||
     !vmDisk ||
-    !vmPassword ||
     !vmLocalization;
 
   return (
@@ -234,12 +241,11 @@ export const FormEditVM = ({ onClose }: IProps) => {
             }}
           >
             <LabelInputVM
-              onChange={() => {}}
+              onChange={setVmPassword}
               value={vmPassword}
               label={t("createVm.password")}
               placeholder={t("createVm.userPassword")}
               type="password"
-              disabled
             />
             <PasswordValidations vmPassword={vmPassword} />
           </Stack>
@@ -297,21 +303,21 @@ export const FormEditVM = ({ onClose }: IProps) => {
             label={t("createVm.cpu")}
             value={vmvCpu}
             onChange={setVmvCpu}
-            min={currentVM.vCPU || 1}
+            min={1}
             max={16}
           />
           <SliderLabelNum
             label={t("createVm.memory")}
             value={vmMemory}
             onChange={setVmMemory}
-            min={currentVM.ram || 1}
+            min={1}
             max={128}
           />
           <SliderLabelNum
             label={t("createVm.disk")}
             value={vmDisk}
             onChange={setVmDisk}
-            min={currentVM.disk || 50}
+            min={20}
             max={2048}
             step={16}
           />
