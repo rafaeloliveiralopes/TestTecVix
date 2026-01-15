@@ -40,6 +40,8 @@ interface IUpdateBrandMaster {
   termsOfUse?: string;
   privacyPolicy?: string;
   retailPercentageDefault?: string | number;
+  hasSelfRegister?: boolean;
+  hasPrepaid?: boolean;
 }
 
 interface IBrandMasterResource {
@@ -93,6 +95,9 @@ interface ICreateNewBrandMaster {
   isPoc?: boolean;
   discountRate?: number;
   minConsumption?: number;
+  retailPercentageDefault?: number;
+  hasSelfRegister?: boolean;
+  hasPrepaid?: boolean;
 }
 
 export interface INewMSPResponse {
@@ -289,6 +294,11 @@ export const useBrandMasterResources = () => {
         cityCode: data?.cityCode ? data.cityCode : undefined,
         district: data?.district ? data.district : undefined,
         isPoc: Boolean(data?.isPoc),
+        discountRate: data?.discountRate,
+        minConsumption: data?.minConsumption,
+        retailPercentageDefault: data?.retailPercentageDefault,
+        hasSelfRegister: data?.hasSelfRegister,
+        hasPrepaid: data?.hasPrepaid,
       },
     });
 
@@ -376,6 +386,11 @@ export const useBrandMasterResources = () => {
         cityCode: data?.cityCode ? data.cityCode : undefined,
         district: data?.district ? data.district : undefined,
         isPoc: Boolean(data?.isPoc),
+        discountRate: data?.discountRate,
+        minConsumption: data?.minConsumption,
+        retailPercentageDefault: data?.retailPercentageDefault,
+        hasSelfRegister: data?.hasSelfRegister,
+        hasPrepaid: data?.hasPrepaid,
       },
     });
 

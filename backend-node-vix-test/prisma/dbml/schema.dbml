@@ -27,6 +27,11 @@ Table brandMaster {
   district String
   stripeUserId String
   isPoc Boolean [default: false]
+  discountRate Float [default: 1]
+  minConsumption Float [default: 0]
+  hasSelfRegister Boolean [default: false]
+  hasPrepaid Boolean [default: false]
+  retailPercentageDefault Float [default: 1]
   contract String
   contractAt DateTime
   pocOpenedAt DateTime

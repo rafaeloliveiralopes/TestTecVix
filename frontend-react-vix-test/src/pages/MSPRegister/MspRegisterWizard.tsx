@@ -155,6 +155,8 @@ export const MspRegisterWizard = ({
     setShowErrorPageTwo(true);
     if (!validateStepTwo()) return;
 
+    const discountFactor = (100 - Number(discountRate || 0)) / 100;
+
     const payload = {
       companyName,
       cnpj,
@@ -175,6 +177,8 @@ export const MspRegisterWizard = ({
       position: "admin" as const,
       mspDomain,
       isPoc,
+      discountRate: discountFactor,
+      minConsumption: Number(minConsumption) || 0,
     };
 
     const editingId = isEditing[0];
@@ -194,6 +198,8 @@ export const MspRegisterWizard = ({
           brandLogo: payload.brandLogo,
           domain: payload.mspDomain,
           isPoc: payload.isPoc,
+          discountRate: payload.discountRate,
+          minConsumption: payload.minConsumption,
         })
       : await createAnewBrandMaster(payload);
 
