@@ -23,6 +23,7 @@ import { StopCircleIcon } from "../../../../icons/StopCircleIcon";
 import { ModalStartVM } from "../ModalStartVM";
 import { ModalStopVM } from "../ModalStopVM";
 import { useStatusInfo } from "../../../../hooks/useStatusInfo";
+import { useZGlobalVar } from "../../../../stores/useZGlobalVar";
 
 interface IProps {
   vm: IVMCreatedResponse;
@@ -35,8 +36,9 @@ export const RowVM = ({ vm, index }: IProps) => {
   const [vmIDToStop, setVmIDToStop] = React.useState<number>(0);
   const [vmIDToStart, setVmIDToStart] = React.useState<number>(0);
   const { currentVM, setCurrentVM } = useZMyVMsList();
+  const { setUpdateThisVm } = useZGlobalVar();
   const { getStatus } = useStatusInfo();
-  const { getOS, getVMById, isLoading: isLoadingVm } = useVmResource();
+  const { getOS, updateVMStatus, isLoading: isLoadingVm } = useVmResource();
 
   const idVM: number = Number(row.idVM);
   const labelId = `enhanced-table-checkbox-${index}`;
@@ -49,9 +51,18 @@ export const RowVM = ({ vm, index }: IProps) => {
   };
 
   const handleConfirVMStatusChange = async () => {
-    const updatedVM = await getVMById(vmIDToStop || vmIDToStart);
-    if (updatedVM) {
-      setRow(updatedVM);
+    const idVMToUpdate = vmIDToStop || vmIDToStart;
+    const nextStatus = vmIDToStop ? "STOPPED" : "RUNNING";
+
+    // Persiste na API a ação do usuário (parar/iniciar) atualizando o status da VM.
+    const updated = await updateVMStatus({
+      idVM: idVMToUpdate,
+      status: nextStatus,
+    });
+    if (updated) {
+      setRow((prev) => ({ ...prev, status: nextStatus }));
+      // Recarrega a listagem para manter os dados completos (ex: brandMaster incluído no listAll).
+      setUpdateThisVm(idVMToUpdate);
     }
     setVmIDToStop(0);
     setVmIDToStart(0);
