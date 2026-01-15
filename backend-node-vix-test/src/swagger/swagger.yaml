@@ -376,6 +376,45 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorMessage"
+  /api/v1/address/cep/{cep}:
+    get:
+      tags: [Address]
+      summary: Buscar endereço por CEP (Brasil)
+      description: Consulta endereço via ViaCEP e retorna campos normalizados para preencher o cadastro.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: cep
+          required: true
+          schema:
+            type: string
+          description: CEP com 8 dígitos (pode enviar com máscara)
+      responses:
+        "200":
+          description: Endereço encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AddressByCepResponse"
+        "400":
+          description: CEP inválido
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "401":
+          description: Não autenticado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "404":
+          description: CEP não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
   /api/v1/vm:
     get:
       tags: [VM]
@@ -843,9 +882,31 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/brandMaster"
+    AddressByCepResponse:
+      type: object
+      properties:
+        cep:
+          type: string
+          description: CEP com 8 dígitos (sem máscara)
+        street:
+          type: string
+          nullable: true
+        district:
+          type: string
+          nullable: true
+        city:
+          type: string
+          nullable: true
+        state:
+          type: string
+          nullable: true
+        cityCode:
+          type: integer
+          nullable: true
 tags:
   - name: Auth
   - name: Users
   - name: Uploads
   - name: brandMaster
+  - name: Address
   - name: VM
