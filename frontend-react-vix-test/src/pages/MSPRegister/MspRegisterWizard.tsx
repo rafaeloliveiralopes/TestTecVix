@@ -432,6 +432,14 @@ export const MspRegisterWizard = ({
             handleRestore={resetWizard}
             labelSave={t("companyRegister.continue")}
             labelRestore={t("mspRegister.cancel")}
+            sxButtonSave={{
+              background: theme[mode].blue,
+              color: theme[mode].btnText,
+            }}
+            sxButtonRestore={{
+              color: theme[mode].blueDark,
+              borderColor: theme[mode].blueDark,
+            }}
           />
         </>
       ) : (
@@ -611,6 +619,14 @@ export const MspRegisterWizard = ({
               handleRestore={() => setActiveStep(0)}
               labelSave={t("mspRegister.confirm")}
               labelRestore={t("mspRegister.back")}
+              sxButtonSave={{
+                background: theme[mode].blue,
+                color: theme[mode].btnText,
+              }}
+              sxButtonRestore={{
+                color: theme[mode].blueDark,
+                borderColor: theme[mode].blueDark,
+              }}
             />
             <Btn
               onClick={resetWizard}
