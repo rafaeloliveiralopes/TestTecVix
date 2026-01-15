@@ -523,7 +523,7 @@ git commit -m "docs: atualiza README com credenciais de teste"
 
 **Exclusão:**
 
-- [ ] Possibilitar **deletar VM** (somente usuários tipo `admin` podem deletar)
+- [x] Possibilitar **deletar VM** (somente usuários tipo `admin` podem deletar)
 
 ---
 
