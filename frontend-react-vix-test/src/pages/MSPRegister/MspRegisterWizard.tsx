@@ -16,6 +16,9 @@ import { LogoUploadCard } from "../../components/LogoUploadCard";
 import { TextRob16Font1S } from "../../components/Text1S";
 import { Btn } from "../../components/Buttons/Btn";
 import { useUserResources } from "../../hooks/useUserResources";
+import { useAddressResources } from "../../hooks/useAddressResources";
+import { onlyDigits } from "../../utils/onlyDigits";
+import { toast } from "react-toastify";
 
 export const MspRegisterWizard = ({
   onUserAdminNotCreated,
@@ -83,6 +86,8 @@ export const MspRegisterWizard = ({
     brandLogoUrl,
     brandObjectName,
     setBrandLogo,
+    setCityCode,
+    setDistrict,
     setEnterOnEditing,
     setShowAddressFields,
   } = useZMspRegisterPage();
@@ -90,6 +95,7 @@ export const MspRegisterWizard = ({
   const { createAnewBrandMaster, editBrandMaster, listAllBrands } =
     useBrandMasterResources();
   const { createUserByManager } = useUserResources();
+  const { getByCep } = useAddressResources();
 
   const requiredSideLabel = (
     <span style={{ color: theme[mode].gray, fontSize: "12px" }}>
@@ -139,6 +145,27 @@ export const MspRegisterWizard = ({
       setAdmPassword(genStrongPass(MIN_PASS_SIZE));
     }
     setActiveStep(1);
+  };
+
+  const fillAddressByCep = async () => {
+    const cepDigits = onlyDigits(cep || "");
+    if (!cepDigits) return;
+    if (maskCEP(cep).length !== 9) return;
+
+    if (!locality) {
+      toast.warning(t("mspRegister.localityFirstWarning"));
+      return;
+    }
+
+    const address = await getByCep(cepDigits);
+    if (!address) return;
+
+    setCountryState(address.state || "");
+    setCity(address.city || "");
+    setStreet(address.street || "");
+    setDistrict(address.district || "");
+    setCityCode(address.cityCode ? String(address.cityCode) : "");
+    setShowAddressFields(true);
   };
 
   const validateStepTwo = () => {
@@ -354,6 +381,7 @@ export const MspRegisterWizard = ({
                   setShowCepError(false);
                   setCep(maskCEP(v));
                 }}
+                onBlur={fillAddressByCep}
                 label={t("mspRegister.cep")}
                 placeholder={"00000-000"}
                 errorMessage={
