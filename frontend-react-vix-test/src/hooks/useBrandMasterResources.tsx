@@ -273,7 +273,7 @@ export const useBrandMasterResources = () => {
         idBrandTheme: 1,
         isActive: true,
         brandLogo: data.brandLogo,
-        domain: undefined,
+        domain: data.mspDomain,
         setorName: data.sector,
         fieldName: undefined,
         location: data.locality,
@@ -289,8 +289,6 @@ export const useBrandMasterResources = () => {
         cityCode: data?.cityCode ? data.cityCode : undefined,
         district: data?.district ? data.district : undefined,
         isPoc: Boolean(data?.isPoc),
-        discountRate: data?.discountRate,
-        minConsumption: data?.minConsumption,
       },
     });
 
@@ -310,7 +308,7 @@ export const useBrandMasterResources = () => {
       url: "/brand-master",
       auth,
     });
-    setIsLoading(true);
+    setIsLoading(false);
 
     if (response.error) {
       toast.error(response.message);
@@ -326,7 +324,7 @@ export const useBrandMasterResources = () => {
   const deleteBrandMaster = async (brandMasterId: number | string) => {
     if (!brandMasterId) return null;
 
-    if (role !== "admin" && role !== "manager") {
+    if (role !== "admin") {
       toast.error(t("generic.errorOlnlyAdmin"));
       return;
     }
@@ -374,14 +372,10 @@ export const useBrandMasterResources = () => {
         placeNumber: data.placeNumber,
         smsContact: data.smsContact,
         brandLogo: data.brandLogo,
+        domain: data.domain,
         cityCode: data?.cityCode ? data.cityCode : undefined,
         district: data?.district ? data.district : undefined,
         isPoc: Boolean(data?.isPoc),
-        discountRate: data?.discountRate,
-        minConsumption: data?.minConsumption,
-        retailPercentageDefault: Number(data?.retailPercentageDefault)
-          ? Number(data?.retailPercentageDefault)
-          : undefined,
       },
     });
 
@@ -403,7 +397,7 @@ export const useBrandMasterResources = () => {
       url: `/brand-master/${idBrand}`,
       auth,
     });
-    setIsLoading(true);
+    setIsLoading(false);
 
     if (response.error) {
       toast.error(response.message);
