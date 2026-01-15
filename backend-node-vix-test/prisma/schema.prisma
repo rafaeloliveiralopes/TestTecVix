@@ -19,6 +19,7 @@ datasource db {
 model brandMaster {
   idBrandMaster Int       @id @default(autoincrement())
   brandName     String?
+  idBrandTheme  Int?
   isActive      Boolean?  @default(true)
   createdAt     DateTime? @default(now()) @db.DateTime(0)
   updatedAt     DateTime? @default(now()) @db.DateTime(0)
@@ -40,6 +41,7 @@ model brandMaster {
   cityCode      Int?
   district      String?
   stripeUserId  String?
+  isStripeActive Boolean? @default(false)
   isPoc         Boolean?  @default(false)
   discountRate  Float?    @default(1)
   minConsumption Float?   @default(0)

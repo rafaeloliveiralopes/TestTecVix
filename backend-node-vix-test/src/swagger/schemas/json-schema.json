@@ -13,6 +13,12 @@
             "null"
           ]
         },
+        "idBrandTheme": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
         "isActive": {
           "type": [
             "boolean",
@@ -142,6 +148,13 @@
             "string",
             "null"
           ]
+        },
+        "isStripeActive": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "default": false
         },
         "isPoc": {
           "type": [

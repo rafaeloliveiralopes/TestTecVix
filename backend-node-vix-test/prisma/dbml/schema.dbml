@@ -5,6 +5,7 @@
 Table brandMaster {
   idBrandMaster Int [pk, increment]
   brandName String
+  idBrandTheme Int
   isActive Boolean [default: true]
   createdAt DateTime [default: `now()`]
   updatedAt DateTime [default: `now()`]
@@ -26,6 +27,7 @@ Table brandMaster {
   cityCode Int
   district String
   stripeUserId String
+  isStripeActive Boolean [default: false]
   isPoc Boolean [default: false]
   discountRate Float [default: 1]
   minConsumption Float [default: 0]
