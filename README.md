@@ -513,17 +513,17 @@ git commit -m "docs: atualiza README com credenciais de teste"
 
 **Modal de Edição:**
 
-- [ ] Trazer corretamente as **informações da VM** no modal
-- [ ] Possibilitar editar: **senha da VM**
-- [ ] Possibilitar editar: **nome da VM**
-- [ ] Possibilitar editar: **vCPU**
-- [ ] Possibilitar editar: **Memória**
-- [ ] Possibilitar editar: **Disco**
-- [ ] Possibilitar editar: **habilitar/desabilitar backup**
+- [x] Trazer corretamente as **informações da VM** no modal
+- [x] Possibilitar editar: **senha da VM**
+- [x] Possibilitar editar: **nome da VM**
+- [x] Possibilitar editar: **vCPU**
+- [x] Possibilitar editar: **Memória**
+- [x] Possibilitar editar: **Disco**
+- [x] Possibilitar editar: **habilitar/desabilitar backup**
 
 **Exclusão:**
 
-- [ ] Possibilitar **deletar VM** (somente usuários tipo `admin` podem deletar)
+- [x] Possibilitar **deletar VM** (somente usuários tipo `admin` podem deletar)
 
 ---
 

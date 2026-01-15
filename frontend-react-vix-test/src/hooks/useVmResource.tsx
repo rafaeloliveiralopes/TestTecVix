@@ -12,6 +12,7 @@ import {
   ENetworkType,
   IVMCreatedResponse,
   IVMResource,
+  IVMResourceUpdate,
 } from "../types/VMTypes";
 import { EOS } from "../stores/useZVMSugestion";
 
@@ -240,7 +241,7 @@ export const useVmResource = () => {
     return response.data;
   };
 
-  const updateVM = async (vm: IVMResource, idVM: number) => {
+  const updateVM = async (vm: IVMResourceUpdate, idVM: number) => {
     const auth = await getAuth();
     setIsLoadingUpdateVM(true);
     const [response] = await Promise.all([
@@ -257,11 +258,11 @@ export const useVmResource = () => {
     setIsLoadingUpdateVM(false);
     if (response.error) {
       toast.error(response.message);
-      return;
+      return null;
     }
 
     toast.success(t("createVm.updateVmSuccess"));
-    return;
+    return response.data;
   };
 
   const deleteVM = async (idVM: number) => {

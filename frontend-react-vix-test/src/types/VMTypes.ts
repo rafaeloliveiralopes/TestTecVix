@@ -29,6 +29,8 @@ export interface IVMResource {
   } | null;
 }
 
+export type IVMResourceUpdate = Omit<IVMResource, "pass"> & { pass?: string };
+
 export interface IPortsByRegions {
   idPortsByRegion: number;
   idVmIpsRegions: number;
@@ -49,6 +51,8 @@ export type TTask =
   | "backup_create"
   | "backup_restore"
   | "backup_delete";
+
+export type TTaskLocation = "bre_barueri" | "usa_miami";
 
 export interface IVMTask {
   action: TAction;
@@ -77,6 +81,7 @@ export interface IVMCreatedResponse {
   user: string;
   vCPU: number;
   status: string | null;
+  location?: TTaskLocation | null;
   idBrandMaster: number | null;
   pass: string | null;
   createdAt: Date | string;
