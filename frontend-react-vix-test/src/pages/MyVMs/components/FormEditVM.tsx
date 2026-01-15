@@ -3,7 +3,7 @@ import { TextRob18Font2M } from "../../../components/Text2M";
 import { useZTheme } from "../../../stores/useZTheme";
 import { useTranslation } from "react-i18next";
 import { LabelInputVM } from "../../VirtualMachine/components/LabelInputVM";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useVmResource } from "../../../hooks/useVmResource";
 import { TOptions } from "../../../types/FormType";
 import { DropDowText } from "../../VirtualMachine/components/DropDowText";
@@ -24,6 +24,7 @@ import { ModalDeleteVM } from "./ModalDeleteVM";
 import { AbsoluteBackDrop } from "../../../components/AbsoluteBackDrop";
 import { ModalStartVM } from "./ModalStartVM";
 import { ModalStopVM } from "./ModalStopVM";
+import { useZGlobalVar } from "../../../stores/useZGlobalVar";
 
 interface IProps {
   onClose: (edit?: boolean) => void;
@@ -40,10 +41,12 @@ export const FormEditVM = ({ onClose }: IProps) => {
     isLoadingDeleteVM,
     getNetworkType,
     isLoadingUpdateVM,
+    updateVMStatus,
   } = useVmResource();
 
   const { statusHashMap } = useStatusInfo();
-  const { currentVM, setCurrentVM } = useZMyVMsList();
+  const { currentVM, setCurrentVM, vmList, setVMList } = useZMyVMsList();
+  const { setUpdateThisVm } = useZGlobalVar();
   const [vmPassword, setVmPassword] = useState(currentVM.pass);
   const [vmName, setVmName] = useState(currentVM.vmName);
   const [vmSO, setVmSO] = useState<TOptions>({
@@ -68,6 +71,11 @@ export const FormEditVM = ({ onClose }: IProps) => {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [vmIDToStart, setVmIDToStart] = useState<number>(0);
   const [vmIDToStop, setVmIDToStop] = useState<number>(0);
+  const [isLoadingStatusChange, setIsLoadingStatusChange] = useState(false);
+
+  useEffect(() => {
+    setStatus(currentVM.status);
+  }, [currentVM.status]);
 
   const handleCancel = () => {
     setVmPassword(currentVM.pass);
@@ -127,14 +135,37 @@ export const FormEditVM = ({ onClose }: IProps) => {
     onClose(true);
   };
 
-  const handleStopVM = async () => {
-    setStatus("STOPPED");
-    onClose(true);
-  };
+  const handleConfirmVMStatusChange = async () => {
+    const idVMToUpdate = vmIDToStop || vmIDToStart;
+    const nextStatus = vmIDToStop ? "STOPPED" : "RUNNING";
 
-  const handleStartVM = async () => {
-    setStatus("RUNNING");
-    onClose(true);
+    setIsLoadingStatusChange(true);
+    const updated = await updateVMStatus({
+      idVM: idVMToUpdate,
+      status: nextStatus,
+    });
+    setIsLoadingStatusChange(false);
+
+    if (!updated) {
+      setVmIDToStop(0);
+      setVmIDToStart(0);
+      return;
+    }
+
+    const updatedStatus = updated.status ?? nextStatus;
+    setStatus(updatedStatus);
+    setCurrentVM({ ...currentVM, ...updated, status: updatedStatus });
+    setVMList(
+      vmList.map((item) =>
+        item.idVM === idVMToUpdate
+          ? { ...item, ...updated, status: updatedStatus }
+          : item,
+      ),
+    );
+    setUpdateThisVm(idVMToUpdate);
+
+    setVmIDToStop(0);
+    setVmIDToStart(0);
   };
 
   const disabledBtn =
@@ -148,7 +179,7 @@ export const FormEditVM = ({ onClose }: IProps) => {
 
   return (
     <>
-      {Boolean(isLoadingDeleteVM || isLoadingUpdateVM) && (
+      {Boolean(isLoadingDeleteVM || isLoadingUpdateVM || isLoadingStatusChange) && (
         <AbsoluteBackDrop open={true} />
       )}
       <Stack
@@ -366,7 +397,7 @@ export const FormEditVM = ({ onClose }: IProps) => {
             >
               <IconButton
                 disabled={
-                  currentVM.status === "RUNNING" || currentVM.status === null
+                  status === "RUNNING" || status === null || isLoadingStatusChange
                 }
                 onClick={() => setVmIDToStart(currentVM.idVM)}
                 sx={{
@@ -388,7 +419,7 @@ export const FormEditVM = ({ onClose }: IProps) => {
               </IconButton>
               <IconButton
                 disabled={
-                  currentVM.status === "STOPPED" || currentVM.status === null
+                  status === "STOPPED" || status === null || isLoadingStatusChange
                 }
                 onClick={() => setVmIDToStop(currentVM.idVM)}
                 sx={{
@@ -537,7 +568,7 @@ export const FormEditVM = ({ onClose }: IProps) => {
         <ModalStartVM
           vmName={vmName}
           idVM={vmIDToStart}
-          onConfirm={handleStartVM}
+          onConfirm={handleConfirmVMStatusChange}
           onCancel={() => setVmIDToStart(0)}
         />
       )}
@@ -545,7 +576,7 @@ export const FormEditVM = ({ onClose }: IProps) => {
         <ModalStopVM
           vmName={vmName}
           idVM={vmIDToStop}
-          onConfirm={handleStopVM}
+          onConfirm={handleConfirmVMStatusChange}
           onCancel={() => setVmIDToStop(0)}
         />
       )}
