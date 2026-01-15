@@ -28,11 +28,11 @@ export const vmListAllSchema = querySchema.merge(
       .nullable()
       .optional()
       .transform((val) =>
-        val
-          ? val.toString() === "null"
+        val === undefined || val === null || val === ""
+          ? undefined
+          : val.toString() === "null"
             ? null
-            : parseInt(val.toString())
-          : val,
+            : parseInt(val.toString()),
       ),
   }),
 );

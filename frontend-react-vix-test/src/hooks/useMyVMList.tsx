@@ -27,7 +27,7 @@ export const useMyVMList = () => {
         auth,
         params: {
           ...Object.fromEntries(
-            Object.entries(params).filter(([, value]) => value !== null),
+            Object.entries(params).filter(([, value]) => value != null),
           ),
           //status: "PAUSED", // "RUNNING", "STOPPED", "PAUSED", "null", undefined
         },
