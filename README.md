@@ -80,6 +80,7 @@ Você pode criar, instalar e utilizar outras bibliotecas, porém o **foco princi
 > **📢 IMPORTANTE**: Seu repositório fork **DEVE SER PÚBLICO** para que a equipe da Vituax possa avaliar seu trabalho.
 
 Certifique-se de que:
+
 - [ ] Seu repositório está configurado como **público** (não privado)
 - [ ] A equipe da Vituax consegue acessar o link sem necessidade de permissões especiais
 
@@ -133,7 +134,7 @@ O projeto está dividido em três partes principais:
 TestTecVix/
 ├── backend-node-vix-test/    # API REST em Node.js + Express + Prisma
 ├── frontend-react-vix-test/  # Interface em React + TypeScript + Material-UI
-├── screenshots/              # Imagens de referência para as telas
+├── screeshots/               # Imagens de referência para as telas (nome legado)
 └── README.md                 # Este arquivo
 ```
 
@@ -153,6 +154,7 @@ Antes de começar, certifique-se de ter instalado:
 ## 🛠️ Stack Tecnológica
 
 ### Backend
+
 - **Node.js** - Runtime JavaScript
 - **Express** - Framework web
 - **Prisma** - ORM (Object-Relational Mapping)
@@ -162,6 +164,7 @@ Antes de começar, certifique-se de ter instalado:
 - **Jest** - Framework de testes
 
 ### Frontend
+
 - **React** - Biblioteca para interfaces
 - **TypeScript** - Tipagem estática
 - **Material-UI (MUI)** - Biblioteca de componentes
@@ -231,6 +234,7 @@ npm run db:up
 ```
 
 Este comando irá:
+
 - Subir um container Docker com MySQL
 - Utilizar o arquivo `docker-compose-db.yml`
 - Expor o banco na porta **3312**
@@ -336,7 +340,7 @@ npm run dc:up
 ## 🔌 Estrutura de Portas
 
 | Serviço  | Porta |
-|----------|-------|
+| -------- | ----- |
 | Frontend | 3000  |
 | Backend  | 3001  |
 | MySQL    | 3312  |
@@ -354,10 +358,12 @@ npm run dc:up
 ### Tipos de Usuários
 
 #### Usuário Vituax
+
 - Usuário **sem** `idBrandMaster` associado
 - Considerado um usuário da própria Vituax
 
 #### Usuário com BrandMaster
+
 - Usuário **com** `idBrandMaster` associado
 - Pertence a uma empresa/MSP específica
 
@@ -368,7 +374,7 @@ npm run dc:up
 O sistema possui três níveis de permissão:
 
 | Tipo      | Leitura | Criação | Edição | Exclusão |
-|-----------|---------|---------|--------|----------|
+| --------- | ------- | ------- | ------ | -------- |
 | `member`  | ✅      | ❌      | ❌     | ❌       |
 | `manager` | ✅      | ✅      | ✅     | ❌       |
 | `admin`   | ✅      | ✅      | ✅     | ✅       |
@@ -529,20 +535,32 @@ git commit -m "docs: atualiza README com credenciais de teste"
 
 ### 🏢 Cadastro de MSP
 
-**Referências visuais**: `screenshots/CadastroDeMSPStep01.png` e `screenshots/CadastroDeMSPStep02.png`
+**Referências visuais**: `screeshots/CadastroDeMSPStep01.png` e `screeshots/CadastroDeMSPStep02.png`
 
-- [ ] Implementar componente para **cadastro de MSP em 2 etapas**
-- [ ] Possibilitar **criar um novo MSP**
-- [ ] Possibilitar **editar um MSP já existente**
-- [ ] Adicionar campos de **endereço** (ou puxar pelo CEP e/ou CNPJ)
-- [ ] Implementar filtros de **search**
-- [ ] Implementar flag de **"Mostrar somente os que estão em POC"**
+- [x] Implementar componente para **cadastro de MSP em 2 etapas**
+- [x] Possibilitar **criar um novo MSP**
+- [x] Possibilitar **editar um MSP já existente**
+- [x] Adicionar campos de **endereço** (ou puxar pelo CEP e/ou CNPJ)
+- [x] Implementar filtros de **search**
+- [x] Implementar flag de **"Mostrar somente os que estão em POC"**
+
+#### Modificações e soluções:
+
+**Cadastro/edição em 2 etapas**: wizard de cadastro de MSP com validações e persistência via API (`POST/PUT /api/v1/brand-master`).
+
+**Autofill de endereço por CEP**: ao sair do campo CEP, o sistema busca e preenche automaticamente `Estado`, `Cidade`, `Rua` e `Bairro` (além do `cityCode` quando disponível).
+
+  - Endpoint adicionado no backend e no Swagger: `GET /api/v1/address/cep/:cep` (integração com ViaCEP).
+
+  - Observação: ViaCEP atende CEPs do Brasil; para outros países, o endereço deve ser preenchido manualmente.
+
+**Campos extras no BrandMaster (MSP)**: migrations para suportar os campos usados na UI (`discountRate`, `minConsumption`, `hasSelfRegister`, `hasPrepaid`, `retailPercentageDefault`, `idBrandTheme`, `isStripeActive`).
 
 ---
 
 ### 👥 Cadastro de Funcionários
 
-**Referência visual**: `screenshots/CadastroDeFuncionarios.png`
+**Referência visual**: `screeshots/CadastroDeFuncionarios.png`
 
 - [ ] Implementar a tela de **cadastro de funcionários** seguindo a imagem de referência
 - [ ] Atentar para a **responsividade**
@@ -592,6 +610,7 @@ npm run build
 ```bash
 PORT=3010 node dist/index.js
 ```
+
 **Cole no navegador o link**
 
 ```text
@@ -602,7 +621,7 @@ http://localhost:3010/docs/
 
 ## 📸 Referências Visuais
 
-As imagens de referência para as telas estão localizadas na pasta `screenshots/`:
+As imagens de referência para as telas estão localizadas na pasta `screeshots/` (nome legado no repositório):
 
 - `CadastroDeMSPStep01.png` - Cadastro de MSP (Etapa 1)
 - `CadastroDeMSPStep02.png` - Cadastro de MSP (Etapa 2)

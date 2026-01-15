@@ -13,6 +13,12 @@
             "null"
           ]
         },
+        "idBrandTheme": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
         "isActive": {
           "type": [
             "boolean",
@@ -143,12 +149,54 @@
             "null"
           ]
         },
+        "isStripeActive": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "default": false
+        },
         "isPoc": {
           "type": [
             "boolean",
             "null"
           ],
           "default": false
+        },
+        "discountRate": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "default": 1
+        },
+        "minConsumption": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "default": 0
+        },
+        "hasSelfRegister": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "default": false
+        },
+        "hasPrepaid": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "default": false
+        },
+        "retailPercentageDefault": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "default": 1
         },
         "contract": {
           "type": [

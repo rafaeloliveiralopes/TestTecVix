@@ -42,7 +42,7 @@ export const useUserResources = () => {
     const auth = await getAuth();
     setIsLoading(true);
     const response = await api.put<IUserDB>({
-      url: `/user/${idUser}`,
+      url: `/users/${idUser}`,
       data,
       auth,
     });
@@ -67,7 +67,7 @@ export const useUserResources = () => {
 
   const createUserByManager = async (data: ICreateNewUser) => {
     if (role !== "admin" && role !== "manager") return null;
-    const idBrandMaster = idBrand;
+    const idBrandMaster = data.idBrandMaster ?? idBrand;
     if (!idBrandMaster) {
       toast.error(t("generic.errorToSaveData"));
       return null;
@@ -75,8 +75,8 @@ export const useUserResources = () => {
 
     const auth = await getAuth();
     setIsLoading(true);
-    const response = await api.post({
-      url: `/user/new-user`,
+    const response = await api.post<IUserDB>({
+      url: `/users`,
       auth,
       data: {
         ...data,
