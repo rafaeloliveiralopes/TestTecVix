@@ -7,6 +7,8 @@ import { useAuth } from "./useAuth";
 import { useZGlobalVar } from "../stores/useZGlobalVar";
 import { useZUserProfile } from "../stores/useZUserProfile";
 import { IVMCreatedResponse } from "../types/VMTypes";
+import { useTranslation } from "react-i18next";
+import { translateBackendError } from "../utils/translateBackendError";
 
 export const useListVms = () => {
   const [vmList, setVmList] = useState<IVMCreatedResponse[]>([]);
@@ -22,6 +24,7 @@ export const useListVms = () => {
   const { idBrand } = useZUserProfile();
   const { goLogout } = useLogin();
   const { getAuth } = useAuth();
+  const { t } = useTranslation();
 
   const fetchListVms = useCallback(
     async (
@@ -48,7 +51,9 @@ export const useListVms = () => {
 
       setIsLoading(false);
       if (response.error) {
-        if (!response.message.includes("expired")) toast.error(response.message);
+        if (!response.message.includes("expired")) {
+          toast.error(translateBackendError(response.message, t));
+        }
         setVmList([]);
         setVmTotalCount(0);
         setTotalCountVMs(0);

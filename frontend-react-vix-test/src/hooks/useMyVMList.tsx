@@ -4,10 +4,13 @@ import { IListAll } from "../types/ListAllTypes";
 import { toast } from "react-toastify";
 import { useAuth } from "./useAuth";
 import { IVMCreatedResponse } from "../types/VMTypes";
+import { useTranslation } from "react-i18next";
+import { translateBackendError } from "../utils/translateBackendError";
 
 export const useMyVMList = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { getAuth } = useAuth();
+  const { t } = useTranslation();
 
   const fetchMyVmsList = useCallback(
     async (
@@ -35,7 +38,7 @@ export const useMyVMList = () => {
 
       setIsLoading(false);
       if (response.error) {
-        toast.error(response.message);
+        toast.error(translateBackendError(response.message, t));
         return { totalCount: 0, vmList: [] };
       }
 
