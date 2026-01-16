@@ -4,13 +4,13 @@ import { ERROR_MESSAGE } from "../constants/erroMessages";
 import { STATUS_CODE } from "../constants/statusCode";
 import { verifyToken } from "../utils/jwt";
 import { CustomRequest } from "../types/custom";
-import { user } from "@prisma/client";
 import { UserService } from "../services/UserService";
+import { UserSafeWithBrand } from "../models/UserModel";
 
 const userService = new UserService();
 
 export const authUser = async (
-  req: CustomRequest<user>,
+  req: CustomRequest<UserSafeWithBrand>,
   res: Response,
   next: NextFunction,
 ) => {

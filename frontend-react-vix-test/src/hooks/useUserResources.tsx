@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 
 export interface IUserDB {
-  idUser: number;
+  idUser: string;
   idBrandMaster: number | null;
   username: string;
   email: string;
@@ -14,11 +14,15 @@ export interface IUserDB {
   profileImgUrl: null | string;
   role: "admin" | "manager" | "member";
   isActive: boolean;
-  socketId: string | null;
   createdAt: string | Date;
   updatedAt: string | Date;
   deletedAt: string | Date | null;
   fullName?: string;
+  field?: string | null;
+  department?: string | null;
+  contractDate?: string | Date | null;
+  lastLoginDate?: string | Date | null;
+  brandMaster?: { brandName: string | null } | null;
 }
 
 interface ICreateNewUser {
@@ -28,6 +32,9 @@ interface ICreateNewUser {
   password?: string;
   fullName?: string;
   userPhoneNumber?: string;
+  field?: string;
+  department?: string;
+  contractDate?: string;
   idBrandMaster?: number;
   isActive?: boolean;
 }
@@ -65,6 +72,23 @@ export const useUserResources = () => {
     return response.data;
   };
 
+  const listUsers = async () => {
+    const auth = await getAuth();
+    setIsLoading(true);
+    const response = await api.get<IUserDB[]>({
+      url: `/users`,
+      auth,
+    });
+    setIsLoading(false);
+
+    if (response.error) {
+      toast.error(response.message);
+      return null;
+    }
+
+    return response.data ?? [];
+  };
+
   const createUserByManager = async (data: ICreateNewUser) => {
     if (role !== "admin" && role !== "manager") return null;
     const idBrandMaster = data.idBrandMaster ?? idBrand;
@@ -92,5 +116,55 @@ export const useUserResources = () => {
     return response.data;
   };
 
-  return { isLoading, updateUser, createUserByManager };
+  const updateUserByManager = async (idUser: string, data: ICreateNewUser) => {
+    if (!idUser) return null;
+    if (role !== "admin" && role !== "manager") return null;
+
+    const auth = await getAuth();
+    setIsLoading(true);
+    const response = await api.put<IUserDB>({
+      url: `/users/${idUser}`,
+      auth,
+      data,
+    });
+    setIsLoading(false);
+
+    if (response.error) {
+      toast.error(response.message);
+      return null;
+    }
+
+    return response.data;
+  };
+
+  const deleteUserByAdmin = async (idUser: string) => {
+    if (!idUser) return false;
+    if (role !== "admin") {
+      toast.error(t("generic.errorOlnlyAdmin"));
+      return false;
+    }
+
+    const auth = await getAuth();
+    setIsLoading(true);
+    const response = await api.delete<unknown>({
+      url: `/users/${idUser}`,
+      auth,
+    });
+    setIsLoading(false);
+
+    if (response.error) {
+      toast.error(response.message);
+      return false;
+    }
+    return true;
+  };
+
+  return {
+    isLoading,
+    updateUser,
+    listUsers,
+    createUserByManager,
+    updateUserByManager,
+    deleteUserByAdmin,
+  };
 };

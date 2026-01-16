@@ -1,5 +1,27 @@
 import { prisma } from "../database/client";
-import { user } from "@prisma/client";
+import { user, Prisma } from "@prisma/client";
+
+export type UserSafeWithBrand = Prisma.userGetPayload<{
+  select: {
+    idUser: true;
+    username: true;
+    email: true;
+    profileImgUrl: true;
+    role: true;
+    idBrandMaster: true;
+    isActive: true;
+    lastLoginDate: true;
+    createdAt: true;
+    updatedAt: true;
+    deletedAt: true;
+    userPhoneNumber: true;
+    field: true;
+    department: true;
+    contractDate: true;
+    fullName: true;
+    brandMaster: { select: { brandName: true } };
+  };
+}>;
 
 export class UserModel {
   async findByEmail(email: string): Promise<user | null> {
@@ -27,30 +49,94 @@ export class UserModel {
     role?: "admin" | "member" | "manager";
     idBrandMaster?: number | null;
     profileImgUrl?: string | null;
+    userPhoneNumber?: string | null;
+    field?: string | null;
+    department?: string | null;
+    contractDate?: Date | string | null;
+    fullName?: string | null;
+    isActive?: boolean | null;
   }): Promise<user> {
     return await prisma.user.create({
       data: {
         ...data,
-        isActive: true,
+        isActive: data.isActive ?? true,
       },
     });
   }
 
-  async getById(idUser: string): Promise<user | null> {
+  async getById(idUser: string): Promise<UserSafeWithBrand | null> {
     return await prisma.user.findUnique({
       where: { idUser },
+      select: {
+        idUser: true,
+        username: true,
+        email: true,
+        profileImgUrl: true,
+        role: true,
+        idBrandMaster: true,
+        isActive: true,
+        lastLoginDate: true,
+        createdAt: true,
+        updatedAt: true,
+        deletedAt: true,
+        userPhoneNumber: true,
+        field: true,
+        department: true,
+        contractDate: true,
+        fullName: true,
+        brandMaster: { select: { brandName: true } },
+      },
     });
   }
 
-  async listAll(): Promise<user[]> {
-    return await prisma.user.findMany({ where: { deletedAt: null } });
+  async listAll(): Promise<UserSafeWithBrand[]> {
+    return await prisma.user.findMany({
+      where: { deletedAt: null },
+      select: {
+        idUser: true,
+        username: true,
+        email: true,
+        profileImgUrl: true,
+        role: true,
+        idBrandMaster: true,
+        isActive: true,
+        lastLoginDate: true,
+        createdAt: true,
+        updatedAt: true,
+        deletedAt: true,
+        userPhoneNumber: true,
+        field: true,
+        department: true,
+        contractDate: true,
+        fullName: true,
+        brandMaster: { select: { brandName: true } },
+      },
+    });
   }
 
-  async update(idUser: string, data: Partial<user>): Promise<user> {
-    // Não permitir update de campos sensíveis diretamente
+  async update(idUser: string, data: Partial<user>): Promise<UserSafeWithBrand> {
     return await prisma.user.update({
       where: { idUser },
       data: { ...data, updatedAt: new Date() },
+      select: {
+        idUser: true,
+        username: true,
+        email: true,
+        profileImgUrl: true,
+        role: true,
+        idBrandMaster: true,
+        isActive: true,
+        lastLoginDate: true,
+        createdAt: true,
+        updatedAt: true,
+        deletedAt: true,
+        userPhoneNumber: true,
+        field: true,
+        department: true,
+        contractDate: true,
+        fullName: true,
+        brandMaster: { select: { brandName: true } },
+      },
     });
   }
 

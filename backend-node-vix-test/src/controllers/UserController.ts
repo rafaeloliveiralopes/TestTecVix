@@ -52,7 +52,8 @@ export class UserController {
     res: Response,
   ) {
     const { idUser } = req.params;
-    const result = await this.userService.update(idUser, req.body);
+    const user = req.user as PrismaUser;
+    const result = await this.userService.update(idUser, req.body, user);
     return res.status(STATUS_CODE.OK).json(result);
   }
 

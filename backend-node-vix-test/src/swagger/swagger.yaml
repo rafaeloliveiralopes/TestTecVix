@@ -654,6 +654,9 @@ components:
       type: object
       required: [username, email, password]
       properties:
+        fullName:
+          type: string
+          nullable: true
         username:
           type: string
         email:
@@ -662,19 +665,37 @@ components:
         password:
           type: string
           description: Senha do usuário (mínimo 8 caracteres)
+        userPhoneNumber:
+          type: string
+          nullable: true
         role:
           type: string
           enum: [admin, manager, member]
         profileImgUrl:
           type: string
           nullable: true
+        field:
+          type: string
+          nullable: true
+        department:
+          type: string
+          nullable: true
+        contractDate:
+          type: string
+          format: date-time
+          nullable: true
         idBrandMaster:
           type: integer
           nullable: true
+        isActive:
+          type: boolean
     UserUpdateRequest:
       type: object
-      description: Atualização de usuário (campos sensíveis como password/role não são aceitos)
+      description: Atualização de usuário (password não é aceito; role só pode ser alterado por admin)
       properties:
+        fullName:
+          type: string
+          nullable: true
         username:
           type: string
         email:
@@ -683,6 +704,22 @@ components:
         profileImgUrl:
           type: string
           nullable: true
+        userPhoneNumber:
+          type: string
+          nullable: true
+        field:
+          type: string
+          nullable: true
+        department:
+          type: string
+          nullable: true
+        contractDate:
+          type: string
+          format: date-time
+          nullable: true
+        role:
+          type: string
+          enum: [admin, manager, member]
         idBrandMaster:
           type: integer
           nullable: true
@@ -693,6 +730,9 @@ components:
       properties:
         idUser:
           type: string
+        fullName:
+          type: string
+          nullable: true
         username:
           type: string
         email:
@@ -700,6 +740,19 @@ components:
           format: email
         profileImgUrl:
           type: string
+          nullable: true
+        userPhoneNumber:
+          type: string
+          nullable: true
+        field:
+          type: string
+          nullable: true
+        department:
+          type: string
+          nullable: true
+        contractDate:
+          type: string
+          format: date-time
           nullable: true
         role:
           type: string

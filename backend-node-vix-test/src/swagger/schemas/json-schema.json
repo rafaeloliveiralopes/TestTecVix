@@ -365,6 +365,37 @@
             "null"
           ]
         },
+        "userPhoneNumber": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "field": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "department": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "contractDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "fullName": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "role": {
           "type": "string",
           "default": "member",
