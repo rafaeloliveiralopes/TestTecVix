@@ -114,7 +114,10 @@ export class UserModel {
     });
   }
 
-  async update(idUser: string, data: Partial<user>): Promise<UserSafeWithBrand> {
+  async update(
+    idUser: string,
+    data: Partial<user>,
+  ): Promise<UserSafeWithBrand> {
     return await prisma.user.update({
       where: { idUser },
       data: { ...data, updatedAt: new Date() },

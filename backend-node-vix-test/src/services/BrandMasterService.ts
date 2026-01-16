@@ -69,6 +69,14 @@ export class BrandMasterService {
       );
     }
 
+    const isTryingToChangeLogo =
+      validData.brandLogo !== undefined &&
+      validData.brandLogo !== oldBrandMaster.brandLogo;
+    // Regra de negócio (White Label): somente admin pode alterar a logo do BrandMaster (MSP).
+    if (isTryingToChangeLogo && user.role !== "admin") {
+      throw new AppError(ERROR_MESSAGE.UNAUTHORIZED, STATUS_CODE.UNAUTHORIZED);
+    }
+
     if (
       !oldBrandMaster.contract &&
       validData.contract &&

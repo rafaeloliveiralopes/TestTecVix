@@ -365,11 +365,13 @@ paths:
         - bearerAuth: []
       responses:
         "200":
-          description: Sem implementação (retorna null)
+          description: BrandMaster do usuário logado (ou null para usuários Vituax sem idBrandMaster)
           content:
             application/json:
               schema:
-                nullable: true
+                oneOf:
+                  - $ref: "#/components/schemas/brandMaster"
+                  - type: "null"
         "401":
           description: Não autenticado
           content:
@@ -615,8 +617,6 @@ paths:
     get:
       tags: [Uploads]
       summary: Baixar arquivo por objectName
-      security:
-        - bearerAuth: []
       parameters:
         - in: path
           name: objectName
@@ -628,8 +628,75 @@ paths:
           description: Arquivo
           content:
             application/octet-stream: {}
+        "400":
+          description: objectName inválido
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+  /api/v1/upload/file:
+    post:
+      tags: [Uploads]
+      summary: Upload de arquivo (multipart/form-data)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: Upload realizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  objectName:
+                    type: string
+                  url:
+                    type: string
+        "400":
+          description: Requisição inválida
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
         "401":
           description: Não autenticado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+  /api/v1/upload/file/{objectName}:
+    get:
+      tags: [Uploads]
+      summary: Resolver URL pública por objectName
+      parameters:
+        - in: path
+          name: objectName
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: URL pública
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url:
+                    type: string
+        "400":
+          description: objectName inválido
           content:
             application/json:
               schema:

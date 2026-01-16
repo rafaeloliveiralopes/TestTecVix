@@ -50,7 +50,10 @@ const swaggerDocs = {
 swaggerDocs.paths = swaggerYamlDocs.paths;
 swaggerDocs.tags = swaggerYamlDocs.tags;
 
-const baseComponents = (swaggerDocs.components || {}) as Record<string, unknown>;
+const baseComponents = (swaggerDocs.components || {}) as Record<
+  string,
+  unknown
+>;
 const yamlComponents = (swaggerYamlDocs?.components || {}) as Record<
   string,
   unknown
