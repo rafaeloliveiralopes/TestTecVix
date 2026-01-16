@@ -632,7 +632,7 @@ git commit -m "docs: atualiza README com credenciais de teste"
 
 - [x] Permitir a edição das **informações de contato**
 - [x] Permitir a edição da **senha**
-- [ ] Permitir a edição da **imagem de perfil** do usuário logado
+- [x] Permitir a edição da **imagem de perfil** do usuário logado
 
 #### Implementações realizadas
 
@@ -651,6 +651,7 @@ git commit -m "docs: atualiza README com credenciais de teste"
   - Botão **Salvar alterações**: salva dados de contato do usuário e, se informado, troca a senha; em seguida atualiza os stores (Zustand) e mostra feedback via toast.
   - Botão **Redefinir todos os dados**: restaura os campos do formulário para os valores atuais (estado/store) e limpa a senha.
 - Notificações (admin/manager): persistência via BrandMaster, salvando `emailContact`, `smsContact` e `timezone` do MSP.
+- Foto de perfil: upload reutiliza o mesmo bucket local (`/upload/file`) e salva o `objectName` em `user.profileImgUrl` (o header resolve e exibe via `ImgFromDB`).
 
 **Soluções (pontos de atenção)**
 
