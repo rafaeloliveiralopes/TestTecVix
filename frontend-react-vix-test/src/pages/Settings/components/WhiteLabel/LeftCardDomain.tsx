@@ -23,6 +23,7 @@ export const LeftCardDomain = ({ theme }: IWhiteLabelChildProps) => {
   const {
     brandLogoTemp,
     brandObjectName,
+    brandLogoRemoved,
     setBrandInfo,
     domain: domainName,
     idBrand,
@@ -50,14 +51,26 @@ export const LeftCardDomain = ({ theme }: IWhiteLabelChildProps) => {
   // };
 
   const handleSave = async () => {
+    const shouldRemoveLogo = Boolean(brandLogoRemoved);
     const response = await updateBrandMaster({
-      brandLogo: brandObjectName || undefined,
+      brandLogo: shouldRemoveLogo ? null : brandObjectName || undefined,
     });
     if (!response) return;
     setBrandInfo({
-      ...(brandLogoTemp
-        ? { brandLogo: brandLogoTemp, brandLogoTemp: "", brandObjectName: "" }
-        : {}),
+      ...(shouldRemoveLogo
+        ? {
+            brandLogo: "",
+            brandLogoTemp: "",
+            brandObjectName: "",
+            brandLogoRemoved: false,
+          }
+        : brandLogoTemp
+          ? {
+              brandLogo: brandLogoTemp,
+              brandLogoTemp: "",
+              brandObjectName: "",
+            }
+          : {}),
     });
   };
 
