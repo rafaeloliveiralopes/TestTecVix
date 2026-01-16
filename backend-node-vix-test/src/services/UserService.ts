@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import { UserModel } from "../models/UserModel";
+import { UserSafeWithBrand } from "../models/UserModel";
 import { userCreatedSchema } from "../types/validations/User/createUser";
 import { user } from "@prisma/client";
 import { AppError } from "../errors/AppError";
@@ -41,6 +42,13 @@ export class UserService {
     // Hash da senha (NUNCA salvar em texto puro)
     const hashedPassword = await bcrypt.hash(validData.password, 10);
 
+    const contractDate = validData.contractDate
+      ? new Date(validData.contractDate)
+      : null;
+    if (validData.contractDate && contractDate && isNaN(contractDate.getTime())) {
+      throw new AppError(ERROR_MESSAGE.INVALID_DATA, STATUS_CODE.BAD_REQUEST);
+    }
+
     // Criar usuário no banco
     const newUser = await this.userModel.create({
       username: validData.username,
@@ -49,6 +57,12 @@ export class UserService {
       role: validData.role,
       idBrandMaster: validData.idBrandMaster,
       profileImgUrl: validData.profileImgUrl,
+      userPhoneNumber: validData.userPhoneNumber,
+      field: validData.field,
+      department: validData.department,
+      contractDate,
+      fullName: validData.fullName,
+      isActive: validData.isActive ?? true,
     });
 
     // Remover senha da resposta (segurança)
@@ -66,24 +80,25 @@ export class UserService {
   }
 
   // Atualiza usuário com sanitização defensiva (autorização via middleware).
-  async update(idUser: string, data: unknown): Promise<user> {
+  async update(
+    idUser: string,
+    data: unknown,
+    requester: user,
+  ): Promise<UserSafeWithBrand> {
     const sanitizedData =
       typeof data === "object" && data !== null && !Array.isArray(data)
         ? { ...(data as Record<string, unknown>) }
         : {};
 
     // Campos que nunca devem ser alterados via update genérico
-    const forbidden = [
-      "password",
-      "deletedAt",
-      "createdAt",
-      "updatedAt",
-      "idUser",
-      "role",
-    ];
+    const forbidden = ["password", "deletedAt", "createdAt", "updatedAt", "idUser"];
 
     for (const field of forbidden) {
       delete sanitizedData[field];
+    }
+
+    if (requester.role !== "admin") {
+      delete sanitizedData.role;
     }
 
     return await this.userModel.update(idUser, sanitizedData as Partial<user>);

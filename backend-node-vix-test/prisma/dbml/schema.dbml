@@ -68,6 +68,11 @@ Table user {
   password String [not null]
   email String [not null]
   profileImgUrl String
+  userPhoneNumber String
+  field String
+  department String
+  contractDate DateTime
+  fullName String
   role ERole [not null, default: 'member']
   idBrandMaster Int
   isActive Boolean [default: true]

@@ -84,6 +84,11 @@ model user {
   password      String
   email         String
   profileImgUrl String?
+  userPhoneNumber String?
+  field         String?
+  department    String?
+  contractDate  DateTime? @db.DateTime(0)
+  fullName      String?
   role          ERole     @default(member)
   idBrandMaster Int?
   isActive      Boolean?  @default(true)
