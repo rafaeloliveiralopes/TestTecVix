@@ -4,6 +4,7 @@ import { useAuth } from "./useAuth";
 import { api } from "../services/api";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
+import { translateBackendError } from "../utils/translateBackendError";
 
 export interface IUserDB {
   idUser: string;
@@ -55,7 +56,7 @@ export const useUserResources = () => {
     setIsLoading(false);
 
     if (response.error) {
-      toast.error(response.message);
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
       return null;
     }
 
@@ -87,7 +88,7 @@ export const useUserResources = () => {
       });
       setIsLoading(false);
       if (response.error) {
-        toast.error(response.message);
+        const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
         return null;
       }
 
@@ -139,7 +140,7 @@ export const useUserResources = () => {
     setIsLoading(false);
 
     if (response.error) {
-      toast.error(response.message);
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
       return null;
     }
 
@@ -147,7 +148,10 @@ export const useUserResources = () => {
   };
 
   const createUserByManager = async (data: ICreateNewUser) => {
-    if (role !== "admin" && role !== "manager") return null;
+    if (role !== "admin" && role !== "manager") {
+      toast.error(t("generic.errorOnlyAdminOrManager"));
+      return null;
+    }
     const idBrandMaster = data.idBrandMaster ?? idBrand;
     if (!idBrandMaster) {
       toast.error(t("generic.errorToSaveData"));
@@ -166,7 +170,7 @@ export const useUserResources = () => {
     });
     setIsLoading(false);
     if (response.error) {
-      toast.error(response.message);
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
       return null;
     }
 
@@ -174,8 +178,10 @@ export const useUserResources = () => {
   };
 
   const updateUserByManager = async (idUser: string, data: ICreateNewUser) => {
-    if (!idUser) return null;
-    if (role !== "admin" && role !== "manager") return null;
+    if (role !== "admin" && role !== "manager") {
+      toast.error(t("generic.errorOnlyAdminOrManager"));
+      return null;
+    }
 
     const auth = await getAuth();
     setIsLoading(true);
@@ -187,7 +193,7 @@ export const useUserResources = () => {
     setIsLoading(false);
 
     if (response.error) {
-      toast.error(response.message);
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
       return null;
     }
 
@@ -210,7 +216,7 @@ export const useUserResources = () => {
     setIsLoading(false);
 
     if (response.error) {
-      toast.error(response.message);
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
       return false;
     }
     return true;

@@ -595,6 +595,21 @@ git commit -m "docs: atualiza README com credenciais de teste"
 - Rota do frontend: `GET /colaborator-register` (tela privada) para criação/edição/listagem de usuários.
 - Backend: adicionadas colunas no `user` para suportar os campos da UI (`fullName`, `userPhoneNumber`, `field`, `department`, `contractDate`) e o `GET /api/v1/users` passou a **não expor senha**.
 
+**Bug corrigido: Mensagem de permissão não exibida/traduzida para usuários member**
+
+- **Problema 1**: Ao clicar em "Salvar" na tela de Cadastro de Funcionários com um usuário `member`, nenhuma mensagem de erro era exibida.
+- **Problema 2**: Em outras telas (Home, Minhas VMs), a mensagem "Unauthorized" aparecia sem tradução adequada.
+
+**Solução implementada:**
+
+1. **Toast de erro no frontend** ([`useUserResources.tsx`](frontend-react-vix-test/src/hooks/useUserResources.tsx)): Adicionado `toast.error()` com mensagem internacionalizada antes do retorno em `createUserByManager` e `updateUserByManager`.
+
+2. **Utilitário de tradução** ([`translateBackendError.ts`](frontend-react-vix-test/src/utils/translateBackendError.ts)): Criado helper que mapeia mensagens de erro do backend (ex: "Unauthorized", "Forbidden") para chaves i18n.
+
+3. **Chaves i18n**: Adicionadas `generic.errorOnlyAdminOrManager`, `generic.unauthorized` e `generic.forbidden` em pt-BR, en e es.
+
+4. **Aplicação nos hooks**: `translateBackendError()` aplicado em 5 hooks principais: `useVmResource`, `useUserResources`, `useBrandMasterResources`, `useListVms`, `useMyVMList`.
+
 ---
 
 ### 🎨 Configuração White Label

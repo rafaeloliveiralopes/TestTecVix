@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import { useZBrandInfo } from "../stores/useZBrandStore";
 import { useUploadFile } from "./useUploadFile";
 import { IBrandMasterBasicInfo } from "../types/BrandMasterTypes";
+import { translateBackendError } from "../utils/translateBackendError";
 
 
 interface IUpdateBrandMaster {
@@ -181,7 +182,7 @@ export const useBrandMasterResources = () => {
     });
     setIsLoading(false);
     if (response.error) {
-      toast.error(response.message);
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
       return;
     }
     toast.success(t("whiteLabel.dnsSaved"));
@@ -212,7 +213,7 @@ export const useBrandMasterResources = () => {
     });
     setIsLoading(false);
     if (response.error) {
-      toast.error(response.message);
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
       return;
     }
     const dataResponse = response.data;
@@ -267,7 +268,7 @@ export const useBrandMasterResources = () => {
     });
     setIsLoading(false);
     if (response.error) {
-      toast.error(response.message);
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
       return;
     }
 
@@ -317,7 +318,7 @@ export const useBrandMasterResources = () => {
 
     setIsLoading(false);
     if (response.error) {
-      toast.error(response.message);
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
       return;
     }
 
@@ -334,7 +335,7 @@ export const useBrandMasterResources = () => {
     setIsLoading(false);
 
     if (response.error) {
-      toast.error(response.message);
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
 
       return {
         totalCount: 0,
@@ -362,7 +363,7 @@ export const useBrandMasterResources = () => {
 
     setIsLoading(false);
     if (response.error) {
-      toast.error(response.message);
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
       return;
     }
     return response.data;
@@ -408,7 +409,7 @@ export const useBrandMasterResources = () => {
     });
 
     if (response.error) {
-      toast.error(response.message);
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
       return;
     }
 
@@ -428,7 +429,7 @@ export const useBrandMasterResources = () => {
     setIsLoading(false);
 
     if (response.error) {
-      toast.error(response.message);
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
       return null;
     }
     return response.data;
@@ -447,6 +448,7 @@ export const useBrandMasterResources = () => {
   };
 };
 
+// [NOTA] Bloco comentado desde o commit inicial (dc1d807). Mantido como referência.
 /*
 export const brandMasterSchema = z.object({
   brandName: z.string().nullable().optional(),

@@ -7,6 +7,7 @@ import { useAuth } from "./useAuth";
 import { useState } from "react";
 import { passwordRegex, validatePassword } from "../utils/genStrongPass";
 import { MIN_PASS_SIZE } from "../configs/contants";
+import { translateBackendError } from "../utils/translateBackendError";
 
 import {
   ENetworkType,
@@ -149,7 +150,7 @@ export const useVmResource = () => {
     });
 
     if (response.error) {
-      toast.error(response.message);
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
       setIsLoadingCreateVM(false);
       return;
     }
@@ -172,7 +173,7 @@ export const useVmResource = () => {
       auth,
     });
     if (response.error) {
-      toast.error(response.message);
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
       return;
     }
 
@@ -194,7 +195,7 @@ export const useVmResource = () => {
       auth,
     });
     if (response.error) {
-      toast.error(response.message);
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
       return null;
     }
 
@@ -216,7 +217,7 @@ export const useVmResource = () => {
     });
 
     if (response.error) {
-      toast.error(response.message);
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
       return;
     }
 
@@ -234,7 +235,7 @@ export const useVmResource = () => {
     });
     setIsLoading(false);
     if (response.error) {
-      toast.error(response.message);
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
       return;
     }
 
@@ -257,7 +258,7 @@ export const useVmResource = () => {
 
     setIsLoadingUpdateVM(false);
     if (response.error) {
-      toast.error(response.message);
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
       return null;
     }
 
@@ -275,7 +276,7 @@ export const useVmResource = () => {
       auth,
     });
     if (response.error) {
-      toast.error(response.message);
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
       return setIsLoadingDeleteVM(false);
     }
 
@@ -331,7 +332,7 @@ export const useVmResource = () => {
       auth,
     });
     if (response.error) {
-      toast.error(response.message);
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
       return false;
     }
     return Boolean(response.data);

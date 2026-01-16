@@ -32,7 +32,8 @@ export const useLoadingApp = (notLoginPage: boolean = false) => {
     ]);
 
     if (theme.error) {
-      toast.error(theme.message);
+      const { isTokenError } = await import("../utils/translateBackendError");
+      if (!isTokenError(theme.message)) toast.error(theme.message);
       return setLoading(false);
     }
 
