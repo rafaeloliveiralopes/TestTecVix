@@ -156,4 +156,11 @@ export class UserModel {
       data: { lastLoginDate: new Date() },
     });
   }
+
+  async updatePassword(idUser: string, password: string): Promise<void> {
+    await prisma.user.update({
+      where: { idUser },
+      data: { password, updatedAt: new Date() },
+    });
+  }
 }

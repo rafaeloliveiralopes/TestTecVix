@@ -4,10 +4,18 @@ import { PersonalInformation } from "./components/PersonalInformation";
 import { NotificationsContact } from "./components/NotificationsContact";
 import { CTAsButtons } from "./components/CTAsButtons";
 import { useZUserProfile } from "../../../../stores/useZUserProfile";
+import { useEffect } from "react";
+import { useUserResources } from "../../../../hooks/useUserResources";
 
 export const ProfileAndNotifications = () => {
   const { mode, theme } = useZTheme();
   const { role } = useZUserProfile();
+  const { getSelf } = useUserResources();
+
+  useEffect(() => {
+    // Garante que os dados do perfil estejam atualizados ao abrir a aba.
+    void getSelf();
+  }, [getSelf]);
   return (
     <Stack
       sx={{

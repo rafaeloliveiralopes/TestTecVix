@@ -10,6 +10,8 @@ import { genToken } from "../utils/jwt";
 import userLoginSchema, {
   TUserLogin,
 } from "../types/validations/User/loginUser";
+import { userUpdatePasswordSchema } from "../types/validations/User/updatePassword";
+import { userUpdateSelfSchema } from "../types/validations/User/updateSelfUser";
 
 export class UserService {
   constructor() {}
@@ -116,6 +118,30 @@ export class UserService {
 
   async delete(idUser: string) {
     return await this.userModel.delete(idUser);
+  }
+
+  async updateSelf(idUser: string, data: unknown, requester: user) {
+    // Perfil do usuário: sanitiza, valida e aplica regras específicas de self-update.
+    const sanitizedData =
+      typeof data === "object" && data !== null && !Array.isArray(data)
+        ? { ...(data as Record<string, unknown>) }
+        : {};
+
+    // Em update de perfil, nunca permitir troca de vínculo/role/ativação via payload.
+    delete sanitizedData.idBrandMaster;
+    delete sanitizedData.role;
+    delete sanitizedData.isActive;
+
+    const validSelfData = userUpdateSelfSchema.parse(sanitizedData);
+
+    return await this.update(idUser, validSelfData, requester);
+  }
+
+  async updateSelfPassword(idUser: string, data: unknown) {
+    const validData = userUpdatePasswordSchema.parse(data);
+    const hashedPassword = await bcrypt.hash(validData.password, 10);
+    await this.userModel.updatePassword(idUser, hashedPassword);
+    return { ok: true };
   }
 
   async login(data: unknown) {

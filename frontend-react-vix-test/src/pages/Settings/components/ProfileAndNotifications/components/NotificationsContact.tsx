@@ -99,9 +99,16 @@ export const NotificationsContact = () => {
     key: keyof IFormProfileNotificationsVar,
     val: string,
   ) => {
+    // Mantém o formato `{ value, errorMessage }` do campo, preservando o erro atual.
+    const fieldMap = {
+      companyEmail,
+      companySMS,
+      timeZone,
+    } as const;
+    const currentField = fieldMap[key as keyof typeof fieldMap];
     setFormProfileNotifications({
       [key]: {
-        ...[key],
+        ...currentField,
         value: val,
       },
     });
@@ -110,22 +117,26 @@ export const NotificationsContact = () => {
   useEffect(() => {
     setFormProfileNotifications({
       companyEmail: {
-        ...companyEmail,
         value: contactEmail || emailContact || "",
         errorMessage: "",
       },
       companySMS: {
-        ...companySMS,
         value: phoneNumber || smsContact || "",
         errorMessage: "",
       },
       timeZone: {
-        ...timeZone,
         value: timezone || "",
         errorMessage: "",
       },
     });
-  }, []);
+  }, [
+    contactEmail,
+    emailContact,
+    phoneNumber,
+    setFormProfileNotifications,
+    smsContact,
+    timezone,
+  ]);
 
   return (
     <Stack

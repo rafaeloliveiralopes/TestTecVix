@@ -15,7 +15,7 @@ import { PerfilPhotoUpload } from "./PerfilPhotoUpload";
 export const PersonalInformation = () => {
   const { t } = useTranslation();
   const { theme, mode } = useZTheme();
-  const { username, userEmail, userPhoneNumber } = useZUserProfile();
+  const { username, userEmail, userPhoneNumber, fullName } = useZUserProfile();
   const {
     userEmail: userEmailForm,
     userName,
@@ -188,9 +188,19 @@ export const PersonalInformation = () => {
     key: keyof IFormProfileNotificationsVar,
     val: string,
   ) => {
+    // Mantém o formato `{ value, errorMessage }` do campo, preservando o erro atual.
+    const fieldMap = {
+      fullNameForm,
+      userName,
+      userEmail: userEmailForm,
+      userPhone,
+      password,
+      confirmPassword,
+    } as const;
+    const currentField = fieldMap[key as keyof typeof fieldMap];
     setFormProfileNotifications({
       [key]: {
-        ...[key],
+        ...currentField,
         value: val,
       },
     });
@@ -199,27 +209,23 @@ export const PersonalInformation = () => {
   useEffect(() => {
     setFormProfileNotifications({
       fullNameForm: {
-        ...fullNameForm,
-        value: "",
+        value: fullName || "",
         errorMessage: "",
       },
       userName: {
-        ...userName,
         value: username || "",
         errorMessage: "",
       },
       userEmail: {
-        ...userEmailForm,
         value: userEmail || "",
         errorMessage: "",
       },
       userPhone: {
-        ...userPhone,
         value: userPhoneNumber || "",
         errorMessage: "",
       },
     });
-  }, []);
+  }, [fullName, setFormProfileNotifications, userEmail, userPhoneNumber, username]);
 
   return (
     <Stack

@@ -5,6 +5,7 @@ export type TRole = "admin" | "manager" | "member";
 
 export interface IUserProfile {
   idUser: number | null;
+  fullName?: string | null;
   profileImgUrl: string | null;
   objectName?: string;
   imageUrl?: string;
@@ -19,6 +20,7 @@ export interface IUserProfile {
 }
 const INIT_STATE: IUserProfile = {
   idUser: null,
+  fullName: null,
   profileImgUrl: null,
   objectName: "",
   imageUrl: "",
