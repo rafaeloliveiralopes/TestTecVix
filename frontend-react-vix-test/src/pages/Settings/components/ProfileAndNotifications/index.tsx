@@ -11,6 +11,7 @@ export const ProfileAndNotifications = () => {
   const { mode, theme } = useZTheme();
   const { role } = useZUserProfile();
   const { getSelf } = useUserResources();
+  const canSeeNotifications = Boolean(role === "admin" || role === "manager");
 
   useEffect(() => {
     // Garante que os dados do perfil estejam atualizados ao abrir a aba.
@@ -34,7 +35,7 @@ export const ProfileAndNotifications = () => {
           background: theme[mode].grayLight,
         }}
       />
-      {Boolean(role === "admin" || role === "manager") && (
+      {canSeeNotifications && (
         <>
           {/* Notifications */}
           <NotificationsContact />

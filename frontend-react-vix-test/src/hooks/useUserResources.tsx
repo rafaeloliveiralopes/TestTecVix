@@ -62,6 +62,9 @@ export const useUserResources = () => {
     setUser({
       fullName: response.data.fullName ?? null,
       profileImgUrl: response.data.profileImgUrl,
+      profileImgRemoved: false,
+      objectName: "",
+      imageUrl: "",
       username: response.data.username,
       userEmail: response.data.email,
       idBrand: response.data.idBrandMaster,
@@ -91,6 +94,9 @@ export const useUserResources = () => {
       setUser({
         fullName: response.data.fullName ?? null,
         profileImgUrl: response.data.profileImgUrl,
+        profileImgRemoved: false,
+        objectName: "",
+        imageUrl: "",
         username: response.data.username,
         userEmail: response.data.email,
         idBrand: response.data.idBrandMaster,

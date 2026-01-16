@@ -14,13 +14,17 @@ export const CTAsButtons = () => {
   const { theme, mode } = useZTheme();
   const {
     role,
+    idBrand: idBrandUserProfile,
     objectName,
     username: usernameProfile,
     userEmail: userEmailProfile,
     userPhoneNumber: userPhoneNumberProfile,
     fullName: fullNameProfile,
+    profileImgRemoved,
+    setUser,
   } = useZUserProfile();
-  const { idBrand, emailContact, smsContact, timezone } = useZBrandInfo();
+  const { idBrand: idBrandBrandInfo, emailContact, smsContact, timezone } =
+    useZBrandInfo();
   const { updateUser, updateSelfPassword } = useUserResources();
   const { updateBrandMasterInfo } = useBrandMasterResources();
   const {
@@ -36,16 +40,27 @@ export const CTAsButtons = () => {
     setFormProfileNotifications,
   } = useZFormProfileNotifications();
 
+  // Notificações corporativas só existem para usuários vinculados a um BrandMaster (MSP).
+  const idBrandMaster = idBrandBrandInfo ?? idBrandUserProfile;
+  const canEditNotifications = Boolean(
+    idBrandMaster && (role === "admin" || role === "manager"),
+  );
+
   const validate = () => {
     let isValid = true;
 
-    if (!fullNameForm.value || fullNameForm.value.length < 4) {
+    // `fullName` é opcional no backend. Valida somente se o usuário preencher.
+    if (fullNameForm.value && fullNameForm.value.length < 4) {
       isValid = false;
       setFormProfileNotifications({
         fullNameForm: {
           ...fullNameForm,
-          errorMessage: t("profileAndNotifications.requiredField"),
+          errorMessage: t("profileAndNotifications.invalidData"),
         },
+      });
+    } else if (fullNameForm.errorMessage) {
+      setFormProfileNotifications({
+        fullNameForm: { ...fullNameForm, errorMessage: "" },
       });
     }
 
@@ -96,7 +111,7 @@ export const CTAsButtons = () => {
       }
     }
 
-    if (role === "admin" || role === "manager") {
+    if (canEditNotifications) {
       if (!companyEmail.value || !emailRegex.test(companyEmail.value)) {
         isValid = false;
         setFormProfileNotifications({
@@ -115,10 +130,6 @@ export const CTAsButtons = () => {
           },
         });
       }
-      if (!idBrand) {
-        isValid = false;
-        toast.error(t("generic.errorToSaveData"));
-      }
     }
 
     return isValid;
@@ -128,15 +139,24 @@ export const CTAsButtons = () => {
     const allValid = validate();
     if (!allValid) return toast.error(t("profileAndNotifications.errorForm"));
 
+    const isRemovingProfileImg = Boolean(profileImgRemoved);
+
     // Atualiza dados do usuário logado (contato + foto de perfil, se enviada).
     const userUpdated = await updateUser({
-      fullName: fullNameForm.value,
+      fullName: fullNameForm.value || null,
       username: userName.value,
       email: userEmail.value,
       userPhoneNumber: userPhone.value || null,
       ...(objectName ? { profileImgUrl: objectName } : {}),
+      ...(isRemovingProfileImg ? { profileImgUrl: null } : {}),
     });
     if (!userUpdated) return;
+
+    // Limpa estado temporário da imagem após persistir (evita reenvio em saves futuros).
+    setFormProfileNotifications({
+      password: { ...password, errorMessage: "" },
+      confirmPassword: { ...confirmPassword, errorMessage: "" },
+    });
 
     // Atualiza a senha somente se o usuário preencheu os campos.
     if (password.value) {
@@ -149,8 +169,16 @@ export const CTAsButtons = () => {
       });
     }
 
+    // Reseta flags/temporários de imagem do perfil.
+    // (A imagem persistida continua em `profileImgUrl` via resposta do backend.)
+    setUser({
+      objectName: "",
+      imageUrl: "",
+      profileImgRemoved: false,
+    });
+
     // Notificações (dados do BrandMaster) somente para admin/manager.
-    if (role === "admin" || role === "manager") {
+    if (canEditNotifications) {
       const brandUpdated = await updateBrandMasterInfo({
         emailContact: companyEmail.value,
         ...(companySMS.value ? { smsContact: companySMS.value } : {}),

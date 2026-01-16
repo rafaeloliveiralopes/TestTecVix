@@ -9,6 +9,8 @@ export interface IUserProfile {
   profileImgUrl: string | null;
   objectName?: string;
   imageUrl?: string;
+  // Controle local: indica que o usuário pediu para remover a imagem atual.
+  profileImgRemoved?: boolean;
   username: string | null;
   isActive?: boolean;
   lastLoginDate?: string | Date;
@@ -24,6 +26,7 @@ const INIT_STATE: IUserProfile = {
   profileImgUrl: null,
   objectName: "",
   imageUrl: "",
+  profileImgRemoved: false,
   username: null,
   userEmail: null,
   userPhoneNumber: null,

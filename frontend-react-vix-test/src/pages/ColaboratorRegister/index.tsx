@@ -17,6 +17,7 @@ import { CTAsDoubleButtons } from "../../components/Buttons/CTAsDoubleButtons";
 import { AbsoluteBackDrop } from "../../components/AbsoluteBackDrop";
 import { CheckCircleIcon } from "../../icons/CheckCircleIcon";
 import { PencilCicleIcon } from "../../icons/PencilCicleIcon";
+import { ImgFromDB } from "../../components/ImgFromDB";
 import { useZTheme } from "../../stores/useZTheme";
 import { useZUserProfile } from "../../stores/useZUserProfile";
 import { useZColaboratorRegister } from "../../stores/useZColaboratorRegister";
@@ -623,19 +624,32 @@ export const ColaboratorRegisterPage = () => {
                     alignItems: "center",
                   }}
                 >
-                  <Box
-                    sx={{
-                      width: "36px",
-                      height: "36px",
-                      borderRadius: "50%",
-                      background: theme[mode].grayLight,
-                    }}
-                  />
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "2px",
+	                  <Box
+	                    sx={{
+	                      width: "36px",
+	                      height: "36px",
+	                      borderRadius: "50%",
+	                      background: theme[mode].grayLight,
+	                      overflow: "hidden",
+	                      display: "flex",
+	                      alignItems: "center",
+	                      justifyContent: "center",
+	                    }}
+	                  >
+	                    {u.profileImgUrl ? (
+	                      <ImgFromDB
+	                        src={u.profileImgUrl}
+	                        alt={`Foto de perfil de ${u.fullName || u.username}`}
+	                        style={{ objectFit: "cover", borderRadius: "50%" }}
+	                        sxLoader={{ width: "20px", height: "20px" }}
+	                      />
+	                    ) : null}
+	                  </Box>
+	                  <Box
+	                    sx={{
+	                      display: "flex",
+	                      flexDirection: "column",
+	                      gap: "2px",
                     }}
                   >
                     <TextRob14Font1Xs sx={{ color: theme[mode].primary }}>

@@ -13,6 +13,8 @@ import {
 import { useZBrandInfo } from "../../../../../stores/useZBrandStore";
 import { useEffect } from "react";
 import { maskPhone } from "../../../../../utils/maskPhone";
+import { TextRob12Font2Xs } from "../../../../../components/Text2Xs";
+import { useZUserProfile } from "../../../../../stores/useZUserProfile";
 
 export const NotificationsContact = () => {
   const { t } = useTranslation();
@@ -20,13 +22,18 @@ export const NotificationsContact = () => {
   const { timeZones } = useGenericResources();
   const { companyEmail, companySMS, timeZone, setFormProfileNotifications } =
     useZFormProfileNotifications();
-  const { emailContact, smsContact, timezone } = useZBrandInfo();
+  const { idBrand: idBrandInfo, emailContact, smsContact, timezone } =
+    useZBrandInfo();
+  const { idBrand: idBrandUser } = useZUserProfile();
   const { contactEmail, phoneNumber } = {
     contactEmail: emailContact,
     phoneNumber: smsContact,
   };
+  const hasBrandMaster = Boolean(idBrandInfo ?? idBrandUser);
 
   const validEmail = () => {
+    // Usuários Vituax (sem BrandMaster) não possuem onde persistir notificações corporativas.
+    if (!hasBrandMaster) return;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Regex para validar email
     if (!companyEmail.value) {
       return setFormProfileNotifications({
@@ -59,6 +66,8 @@ export const NotificationsContact = () => {
   };
 
   const validPhoneNumber = () => {
+    // Usuários Vituax (sem BrandMaster) não possuem onde persistir notificações corporativas.
+    if (!hasBrandMaster) return;
     const digits = companySMS.value.replace(/\D/g, "");
     if (!companySMS.value) {
       return setFormProfileNotifications({
@@ -110,6 +119,7 @@ export const NotificationsContact = () => {
     setFormProfileNotifications({
       companyEmail: {
         value: contactEmail || emailContact || "",
+        // Quando não há BrandMaster, evita manter erros antigos no estado.
         errorMessage: "",
       },
       companySMS: {
@@ -124,6 +134,7 @@ export const NotificationsContact = () => {
   }, [
     contactEmail,
     emailContact,
+    hasBrandMaster,
     phoneNumber,
     setFormProfileNotifications,
     smsContact,
@@ -151,6 +162,13 @@ export const NotificationsContact = () => {
         >
           {t("profileAndNotifications.notifications")}
         </TextRob16FontL>
+        {!hasBrandMaster ? (
+          <TextRob12Font2Xs sx={{ color: theme[mode].gray }}>
+            Notificações corporativas são configuradas no nível do MSP (BrandMaster).
+            Como este usuário não está vinculado a um MSP, estas alterações não serão
+            persistidas.
+          </TextRob12Font2Xs>
+        ) : null}
       </Stack>
       {/* Inputs */}
       <Stack
