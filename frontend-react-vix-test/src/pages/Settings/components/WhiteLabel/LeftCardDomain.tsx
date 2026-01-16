@@ -19,12 +19,13 @@ interface IWhiteLabelChildProps {
 export const LeftCardDomain = ({ theme }: IWhiteLabelChildProps) => {
   const { mode } = useZTheme();
   const { t } = useTranslation();
-  const { role, idBrand } = useZUserProfile();
+  const { role } = useZUserProfile();
   const {
     brandLogoTemp,
     brandObjectName,
     setBrandInfo,
     domain: domainName,
+    idBrand,
   } = useZBrandInfo();
   // const [domain, setDomain] = useState<string>(domainName);
   // const { updateDomain } = useBrandMasterResources();

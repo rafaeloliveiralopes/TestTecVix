@@ -13,9 +13,10 @@ interface IWhiteLabelChildProps {
 
 export const LeftCardLogo = ({ theme }: IWhiteLabelChildProps) => {
   const { t } = useTranslation();
-  const { setBrandInfo, brandLogoTemp, brandLogo } = useZBrandInfo();
-  const { role, idBrand } = useZUserProfile();
-  // White Label só faz sentido para usuário com BrandMaster; e a alteração de logo é exclusiva de admin.
+  const { setBrandInfo, brandLogoTemp, brandLogo, idBrand } = useZBrandInfo();
+  const { role } = useZUserProfile();
+  // O `idBrand` para White Label vem do carregamento inicial (`/brand-master/self`) e fica no store de marca.
+  // A alteração de logo é exclusiva de admin.
   const isDisabled = role !== "admin" || !idBrand;
 
   return (
