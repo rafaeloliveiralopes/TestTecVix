@@ -35,6 +35,7 @@
   "emailAlertMessage": "Please enter a valid email",
   "cnpjAlertMessage": "Please enter a valid Tax ID",
   "companyName": "Company Name",
+  "vituaxCompany": "Vituax",
   "username": "Username",
   "password": "Password",
   "confirmPassword": "Confirm Password",

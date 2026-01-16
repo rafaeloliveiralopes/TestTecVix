@@ -694,8 +694,11 @@ export const ColaboratorRegisterPage = () => {
                       textOverflow: "ellipsis",
                     }}
                   >
-                    {u.brandMaster?.brandName ||
-                      (u.idBrandMaster ? `MSP #${u.idBrandMaster}` : "-")}
+                    {u.brandMaster?.brandName?.trim() ||
+                      (u.idBrandMaster
+                        ? companyOptions.find((o) => o.value === u.idBrandMaster)
+                            ?.label || `MSP #${u.idBrandMaster}`
+                        : t("colaboratorRegister.vituaxCompany"))}
                   </TextRob14Font1Xs>
                   <TextRob14Font1Xs
                     sx={{
