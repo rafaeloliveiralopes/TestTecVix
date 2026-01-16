@@ -29,12 +29,15 @@ export const LeftCardLogo = ({ theme }: IWhiteLabelChildProps) => {
           setBrandInfo({
             brandLogoTemp: url,
             brandObjectName: objectName,
+            brandLogoRemoved: false,
           })
         }
         onRemove={() =>
           setBrandInfo({
             brandLogoTemp: "",
             brandObjectName: "",
+            // Marca a intenção de remoção para que o backend receba 'brandLogo: null' no salvar.
+            brandLogoRemoved: true,
           })
         }
         disabled={isDisabled}

@@ -11,6 +11,32 @@ export class UserController {
   // Service de usuários
   private userService = new UserService();
 
+  // Retorna o usuário logado (GET /users/self). Útil para preencher a tela de perfil.
+  async getSelf(req: CustomRequest<PrismaUser>, res: Response) {
+    return res.status(STATUS_CODE.OK).json(req.user);
+  }
+
+  // Atualiza dados do perfil do usuário logado (PUT /users/self).
+  async updateSelf(req: CustomRequest<PrismaUser>, res: Response) {
+    const currentUser = req.user as PrismaUser;
+    const result = await this.userService.updateSelf(
+      currentUser.idUser,
+      req.body,
+      currentUser,
+    );
+    return res.status(STATUS_CODE.OK).json(result);
+  }
+
+  // Atualiza a senha do usuário logado (PUT /users/self/password).
+  async updateSelfPassword(req: CustomRequest<PrismaUser>, res: Response) {
+    const currentUser = req.user as PrismaUser;
+    const result = await this.userService.updateSelfPassword(
+      currentUser.idUser,
+      req.body,
+    );
+    return res.status(STATUS_CODE.OK).json(result);
+  }
+
   // Cria um novo usuário (rota pública /auth/register)
   async register(req: CustomRequest<unknown>, res: Response) {
     const result = await this.userService.register(req.body);

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { TRole, useZUserProfile } from "../stores/useZUserProfile";
 import { useAuth } from "./useAuth";
 import { api } from "../services/api";
@@ -40,37 +40,88 @@ interface ICreateNewUser {
 }
 
 export const useUserResources = () => {
-  const { idUser, setUser, role, idBrand } = useZUserProfile();
+  const { setUser, role, idBrand } = useZUserProfile();
   const { getAuth } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const { t } = useTranslation();
 
-  const updateUser = async (data: Partial<IUserDB>) => {
+  const getSelf = useCallback(async () => {
     const auth = await getAuth();
     setIsLoading(true);
-    const response = await api.put<IUserDB>({
-      url: `/users/${idUser}`,
-      data,
+    const response = await api.get<IUserDB>({
+      url: `/users/self`,
       auth,
     });
     setIsLoading(false);
+
     if (response.error) {
       toast.error(response.message);
       return null;
     }
 
     setUser({
+      fullName: response.data.fullName ?? null,
       profileImgUrl: response.data.profileImgUrl,
       username: response.data.username,
       userEmail: response.data.email,
       idBrand: response.data.idBrandMaster,
-
       role: response.data.role,
       userPhoneNumber: response.data.userPhoneNumber,
     });
 
     return response.data;
-  };
+  }, [getAuth, setUser]);
+
+  const updateUser = useCallback(
+    async (data: Partial<IUserDB>) => {
+      const auth = await getAuth();
+      setIsLoading(true);
+      const response = await api.put<IUserDB>({
+        // Atualização de perfil do próprio usuário (independente de role).
+        url: `/users/self`,
+        data,
+        auth,
+      });
+      setIsLoading(false);
+      if (response.error) {
+        toast.error(response.message);
+        return null;
+      }
+
+      setUser({
+        fullName: response.data.fullName ?? null,
+        profileImgUrl: response.data.profileImgUrl,
+        username: response.data.username,
+        userEmail: response.data.email,
+        idBrand: response.data.idBrandMaster,
+
+        role: response.data.role,
+        userPhoneNumber: response.data.userPhoneNumber,
+      });
+
+      return response.data;
+    },
+    [getAuth, setUser],
+  );
+
+  const updateSelfPassword = useCallback(
+    async (password: string) => {
+      const auth = await getAuth();
+      setIsLoading(true);
+      const response = await api.put<{ ok: true }>({
+        url: `/users/self/password`,
+        data: { password },
+        auth,
+      });
+      setIsLoading(false);
+      if (response.error) {
+        toast.error(response.message);
+        return false;
+      }
+      return true;
+    },
+    [getAuth],
+  );
 
   const listUsers = async () => {
     const auth = await getAuth();
@@ -161,7 +212,9 @@ export const useUserResources = () => {
 
   return {
     isLoading,
+    getSelf,
     updateUser,
+    updateSelfPassword,
     listUsers,
     createUserByManager,
     updateUserByManager,

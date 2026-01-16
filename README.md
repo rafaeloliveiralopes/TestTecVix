@@ -630,9 +630,36 @@ git commit -m "docs: atualiza README com credenciais de teste"
 
 ### 👤 Configuração de Perfil e Notificações
 
-- [ ] Permitir a edição das **informações de contato**
-- [ ] Permitir a edição da **senha**
+- [x] Permitir a edição das **informações de contato**
+- [x] Permitir a edição da **senha**
 - [ ] Permitir a edição da **imagem de perfil** do usuário logado
+
+#### Implementações realizadas
+
+**Objetivo**: habilitar a aba `Perfil e notificações` com persistência real (API), mantendo a UX já pronta e respeitando permissões.
+
+**Backend (API)**
+
+- Endpoints adicionados para **perfil do usuário logado** (sem depender de `idUser` na URL):
+  - `GET /api/v1/users/self`: retorna o usuário autenticado (campos seguros, sem senha).
+  - `PUT /api/v1/users/self`: atualiza dados de contato do usuário (ex.: `fullName`, `username`, `email`, `userPhoneNumber`, `profileImgUrl`), com sanitização para impedir troca de vínculo/role/ativação.
+  - `PUT /api/v1/users/self/password`: atualiza a senha do usuário logado com hash (mínimo 8 caracteres).
+
+**Frontend (UI/UX)**
+
+- A tela já existente foi conectada à API:
+  - Botão **Salvar alterações**: salva dados de contato do usuário e, se informado, troca a senha; em seguida atualiza os stores (Zustand) e mostra feedback via toast.
+  - Botão **Redefinir todos os dados**: restaura os campos do formulário para os valores atuais (estado/store) e limpa a senha.
+- Notificações (admin/manager): persistência via BrandMaster, salvando `emailContact`, `smsContact` e `timezone` do MSP.
+
+**Soluções (pontos de atenção)**
+
+- O fluxo foi implementado com endpoints `*/self` para evitar acoplamento com o formato do `idUser` no frontend, mantendo a arquitetura limpa e previsível.
+- Atualização de senha é separada do update de perfil para manter segurança e clareza de regras.
+
+**Testes / validação**
+
+- Build e lint executados no backend e no frontend.
 
 ---
 

@@ -14,7 +14,7 @@ interface IUpdateBrandMaster {
   brandName?: string;
   idBrandTheme?: number;
   isActive?: boolean;
-  brandLogo?: string;
+  brandLogo?: string | null;
   domain?: string;
   emailContact?: string;
   cnpj?: string;

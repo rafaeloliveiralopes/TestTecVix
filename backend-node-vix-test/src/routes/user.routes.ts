@@ -10,6 +10,19 @@ const BASE_PATH = API_VERSION.V1 + "/users";
 const userRoutes = Router();
 const userController = new UserController();
 
+// Perfil do usuário logado
+userRoutes.get(`${BASE_PATH}/self`, (req: CustomRequest<user>, res: Response) =>
+  userController.getSelf(req, res),
+);
+userRoutes.put(`${BASE_PATH}/self`, (req: CustomRequest<user>, res: Response) =>
+  userController.updateSelf(req, res),
+);
+userRoutes.put(
+  `${BASE_PATH}/self/password`,
+  (req: CustomRequest<user>, res: Response) =>
+    userController.updateSelfPassword(req, res),
+);
+
 // Leitura para todos
 userRoutes.get(
   BASE_PATH,
