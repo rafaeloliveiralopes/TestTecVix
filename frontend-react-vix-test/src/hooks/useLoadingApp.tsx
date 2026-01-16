@@ -4,11 +4,13 @@ import { toast } from "react-toastify";
 import { useZUserProfile } from "../stores/useZUserProfile";
 import { IBrandMasterResponse } from "../types/BrandMasterTypes";
 import { useBrandMasterInfos } from "./useBrandMasterInfos";
+import { useUserResources } from "./useUserResources";
 
 export const useLoadingApp = (notLoginPage: boolean = false) => {
   const [loading, setLoading] = useState(true);
   const { resetAll: resetAllUser, idUser, token } = useZUserProfile();
   const { setBrandInfos } = useBrandMasterInfos();
+  const { getSelf } = useUserResources();
   const path = window.location.pathname;
 
   const fetchTheme = async () => {
@@ -17,11 +19,17 @@ export const useLoadingApp = (notLoginPage: boolean = false) => {
       setLoading(false);
       return;
     }
-    const theme = await api.get<IBrandMasterResponse | null>({
-      url: "/brand-master/self",
-      auth: { Authorization: `Bearer ${token}` },
-      tryRefetch: true,
-    });
+
+    // Carrega dados do BrandMaster e do perfil do usuário em paralelo.
+    // Garante que profileImgUrl e outros dados estejam atualizados no boot do app.
+    const [theme] = await Promise.all([
+      api.get<IBrandMasterResponse | null>({
+        url: "/brand-master/self",
+        auth: { Authorization: `Bearer ${token}` },
+        tryRefetch: true,
+      }),
+      getSelf(),
+    ]);
 
     if (theme.error) {
       toast.error(theme.message);
