@@ -604,19 +604,29 @@ export const ColaboratorRegisterPage = () => {
                 sx={{
                   display: "flex",
                   flexDirection: "row",
-                  gap: "12px",
-                  alignItems: "center",
                   justifyContent: "space-between",
-                  flexWrap: "wrap",
+                  alignItems: "center",
+                  padding: "8px 4px",
+                  gap: "16px",
+                  "@media (max-width: 800px)": {
+                    flexDirection: "column",
+                    alignItems: "flex-start",
+                  },
                 }}
               >
                 <Box
-                  sx={{ display: "flex", flexDirection: "row", gap: "12px" }}
+                  sx={{
+                    flex: "2",
+                    display: "flex",
+                    flexDirection: "row",
+                    gap: "16px",
+                    alignItems: "center",
+                  }}
                 >
                   <Box
                     sx={{
-                      width: "40px",
-                      height: "40px",
+                      width: "36px",
+                      height: "36px",
                       borderRadius: "50%",
                       background: theme[mode].grayLight,
                     }}
@@ -639,12 +649,11 @@ export const ColaboratorRegisterPage = () => {
 
                 <Box
                   sx={{
+                    flex: "1",
                     display: "flex",
                     flexDirection: "column",
-                    alignItems: "flex-start",
-                    flex: "1",
-                    minWidth: "180px",
-                    "@media (max-width: 900px)": { width: "100%" },
+                    gap: "4px",
+                    "@media (max-width: 900px)": { display: "none" },
                   }}
                 >
                   <TextRob12Font2Xs sx={{ color: theme[mode].gray }}>
@@ -718,7 +727,16 @@ export const ColaboratorRegisterPage = () => {
                   </TextRob14Font1Xs>
                 </Box>
 
-                <Box sx={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                <Box
+                  sx={{
+                    minWidth: "72px",
+                    display: "flex",
+                    gap: "8px",
+                    alignItems: "center",
+                    justifyContent: "flex-end",
+                    "@media (max-width: 600px)": { display: "none" },
+                  }}
+                >
                   <IconButton onClick={() => startEdit(u)}>
                     <PencilCicleIcon fill={theme[mode].blueMedium} />
                   </IconButton>
