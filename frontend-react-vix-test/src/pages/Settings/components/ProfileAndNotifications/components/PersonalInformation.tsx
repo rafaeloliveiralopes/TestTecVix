@@ -266,6 +266,7 @@ export const PersonalInformation = () => {
           value={fullNameForm.value}
           onChange={(val) => handleChange("fullNameForm", val)}
           errorMessage={fullNameForm.errorMessage}
+          placeholder={t("colaboratorRegister.completeNamePlaceholder")}
           icon={
             <EditCirclePencilIcon
               fill={

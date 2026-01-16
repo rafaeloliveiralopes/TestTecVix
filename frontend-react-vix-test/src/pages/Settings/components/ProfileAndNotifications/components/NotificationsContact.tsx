@@ -68,7 +68,7 @@ export const NotificationsContact = () => {
         },
       });
     }
-    // Usa o mesmo padrão de telefone das telas de cadastro (10 ou 11 dígitos + máscara).
+    // Usa o mesmo padrão de telefone das telas de cadastro
     if (digits.length !== 10 && digits.length !== 11) {
       return setFormProfileNotifications({
         companySMS: {
@@ -166,6 +166,7 @@ export const NotificationsContact = () => {
           label={t("profileAndNotifications.email")}
           value={companyEmail.value}
           onChange={(val) => handleChange("companyEmail", val)}
+          placeholder={"contato@email.com"}
           errorMessage={companyEmail.errorMessage}
           onBlur={() => validEmail()}
           icon={
@@ -182,6 +183,7 @@ export const NotificationsContact = () => {
           label={t("profileAndNotifications.sms")}
           value={companySMS.value}
           onChange={(val) => handleChange("companySMS", maskPhone(val))}
+          placeholder={"(00) 00000-0000"}
           errorMessage={companySMS.errorMessage}
           onBlur={() => validPhoneNumber()}
           icon={
