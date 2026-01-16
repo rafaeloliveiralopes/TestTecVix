@@ -12,6 +12,7 @@ import {
 } from "../../../../../stores/useZFormProfileNotifications";
 import { useZBrandInfo } from "../../../../../stores/useZBrandStore";
 import { useEffect } from "react";
+import { maskPhone } from "../../../../../utils/maskPhone";
 
 export const NotificationsContact = () => {
   const { t } = useTranslation();
@@ -58,6 +59,7 @@ export const NotificationsContact = () => {
   };
 
   const validPhoneNumber = () => {
+    const digits = companySMS.value.replace(/\D/g, "");
     if (!companySMS.value) {
       return setFormProfileNotifications({
         companySMS: {
@@ -66,18 +68,8 @@ export const NotificationsContact = () => {
         },
       });
     }
-    const phoneRegex = /^\d+$/; // Regex para validar telefone com 10 ou 11 dígitos
-
-    if (!companySMS.value) {
-      return setFormProfileNotifications({
-        companySMS: {
-          ...companySMS,
-          errorMessage: t("profileAndNotifications.requiredField"),
-        },
-      });
-    }
-
-    if (!phoneRegex.test(companySMS.value) || companySMS.value.length > 20) {
+    // Usa o mesmo padrão de telefone das telas de cadastro (10 ou 11 dígitos + máscara).
+    if (digits.length !== 10 && digits.length !== 11) {
       return setFormProfileNotifications({
         companySMS: {
           ...companySMS,
@@ -189,7 +181,7 @@ export const NotificationsContact = () => {
         <InputLabelAndFeedback
           label={t("profileAndNotifications.sms")}
           value={companySMS.value}
-          onChange={(val) => handleChange("companySMS", val)}
+          onChange={(val) => handleChange("companySMS", maskPhone(val))}
           errorMessage={companySMS.errorMessage}
           onBlur={() => validPhoneNumber()}
           icon={
