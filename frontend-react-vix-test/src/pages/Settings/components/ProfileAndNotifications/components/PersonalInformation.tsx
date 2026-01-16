@@ -11,6 +11,7 @@ import {
 } from "../../../../../stores/useZFormProfileNotifications";
 import { useEffect } from "react";
 import { PerfilPhotoUpload } from "./PerfilPhotoUpload";
+import { maskPhone } from "../../../../../utils/maskPhone";
 
 export const PersonalInformation = () => {
   const { t } = useTranslation();
@@ -155,7 +156,7 @@ export const PersonalInformation = () => {
   };
 
   const validPhoneNumber = () => {
-    const phoneRegex = /^\d{10,11}$/; // Regex para validar telefone com 10 ou 11 dígitos
+    const digits = userPhone.value.replace(/\D/g, "");
 
     if (!userPhone.value) {
       return setFormProfileNotifications({
@@ -166,7 +167,8 @@ export const PersonalInformation = () => {
       });
     }
 
-    if (!phoneRegex.test(userPhone.value) || userPhone.value.length > 20) {
+    // Permite apenas 10 ou 11 dígitos (DDD + número). A máscara lida com a formatação visual.
+    if (digits.length !== 10 && digits.length !== 11) {
       return setFormProfileNotifications({
         userPhone: {
           ...userPhone,
@@ -325,7 +327,7 @@ export const PersonalInformation = () => {
           value={userPhone.value}
           errorMessage={userPhone.errorMessage}
           onBlur={validPhoneNumber}
-          onChange={(val) => handleChange("userPhone", val)}
+          onChange={(val) => handleChange("userPhone", maskPhone(val))}
           icon={
             <EditCirclePencilIcon
               fill={
