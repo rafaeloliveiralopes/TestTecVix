@@ -130,6 +130,96 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorMessage"
+  /api/v1/users/self:
+    get:
+      tags: [Users]
+      summary: Obter perfil do usuário logado
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Dados do usuário logado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        "401":
+          description: Não autenticado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+    put:
+      tags: [Users]
+      summary: Atualizar perfil do usuário logado
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserUpdateRequest"
+      responses:
+        "200":
+          description: Perfil atualizado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        "400":
+          description: Erro de validação
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "401":
+          description: Não autenticado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+  /api/v1/users/self/password:
+    put:
+      tags: [Users]
+      summary: Atualizar senha do usuário logado
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [password]
+              properties:
+                password:
+                  type: string
+                  description: Nova senha (mínimo 8 caracteres)
+            example:
+              password: "NovaSenha@123"
+      responses:
+        "200":
+          description: Senha atualizada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+        "400":
+          description: Erro de validação
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "401":
+          description: Não autenticado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
   /api/v1/users/{idUser}:
     get:
       tags: [Users]
