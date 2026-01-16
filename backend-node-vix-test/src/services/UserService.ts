@@ -45,7 +45,11 @@ export class UserService {
     const contractDate = validData.contractDate
       ? new Date(validData.contractDate)
       : null;
-    if (validData.contractDate && contractDate && isNaN(contractDate.getTime())) {
+    if (
+      validData.contractDate &&
+      contractDate &&
+      isNaN(contractDate.getTime())
+    ) {
       throw new AppError(ERROR_MESSAGE.INVALID_DATA, STATUS_CODE.BAD_REQUEST);
     }
 
@@ -91,7 +95,13 @@ export class UserService {
         : {};
 
     // Campos que nunca devem ser alterados via update genérico
-    const forbidden = ["password", "deletedAt", "createdAt", "updatedAt", "idUser"];
+    const forbidden = [
+      "password",
+      "deletedAt",
+      "createdAt",
+      "updatedAt",
+      "idUser",
+    ];
 
     for (const field of forbidden) {
       delete sanitizedData[field];

@@ -411,11 +411,11 @@ Member:
 
 > Usuários **com** `idBrandMaster` (vinculados ao MSP), criados via tela `Cadastros → Cadastro de Funcionários`.
 >
-> Observação: mantido o comportamento atual do wizard de MSP: o “admin principal” criado no cadastro de MSP possui senha gerada automaticamente (no frontend) ao retornar para o passo 2. 
+> Observação: mantido o comportamento atual do wizard de MSP: o “admin principal” criado no cadastro de MSP possui senha gerada automaticamente (no frontend) ao retornar para o passo 2.
 >
-> Mantive assim por sugestão da imagem de referência (campo “Gerada e enviada por e-mail”): [CadastroDeMSPStep02.png](screenshots/CadastroDeMSPStep02.png). 
+> Mantive assim por sugestão da imagem de referência (campo “Gerada e enviada por e-mail”): [CadastroDeMSPStep02.png](screenshots/CadastroDeMSPStep02.png).
 >
->Por isso, para testes, utilize o `admin2@mspdemoalpha.com`.
+> Por isso, para testes, utilize o `admin2@mspdemoalpha.com`.
 
 ```
 Admin (MSP Demo Alpha):
@@ -496,7 +496,7 @@ git commit -m "docs: atualiza README com credenciais de teste"
 - [x] Implementar tela de register `/register`
 - [x] Implementar autenticação com token JWT
 - [x] Proteger as rotas da aplicação (exceto login e register) para que somente usuários logados possam acessar
-- [ ] Adicionar credenciais de usuários de teste no README e/ou `.env.example`
+- [x] Adicionar credenciais de usuários de teste no README e/ou `.env.example`
 
 ---
 
@@ -574,9 +574,9 @@ git commit -m "docs: atualiza README com credenciais de teste"
 
 **Autofill de endereço por CEP**: ao adicionar o CEP, o sistema busca e preenche automaticamente `Estado`, `Cidade`, `Rua` e `Bairro` (além do `cityCode` quando disponível).
 
-  - Endpoint adicionado no backend e no Swagger: `GET /api/v1/address/cep/:cep` (integração com ViaCEP).
+- Endpoint adicionado no backend e no Swagger: `GET /api/v1/address/cep/:cep` (integração com ViaCEP).
 
-  - Observação: ViaCEP atende CEPs do Brasil; para outros países, o endereço deve ser preenchido manualmente.
+- Observação: ViaCEP atende CEPs do Brasil; para outros países, o endereço deve ser preenchido manualmente.
 
 **Campos extras no BrandMaster (MSP)**: migrations para suportar os campos usados na UI (`discountRate`, `minConsumption`, `hasSelfRegister`, `hasPrepaid`, `retailPercentageDefault`, `idBrandTheme`, `isStripeActive`).
 
@@ -599,8 +599,32 @@ git commit -m "docs: atualiza README com credenciais de teste"
 
 ### 🎨 Configuração White Label
 
-- [ ] Permitir que a **logo da empresa** do usuário seja alterada
-- [ ] Somente usuários **admin** podem realizar essa alteração
+- [x] Permitir que a **logo da empresa** do usuário seja alterada
+- [x] Somente usuários **admin** podem realizar essa alteração
+
+#### Implementações realizadas
+
+**Objetivo**: habilitar White Label de forma segura (somente admin) e consistente com a arquitetura já existente (BrandMaster/MSP + bucket local).
+
+**Backend (API)**
+
+- `GET /api/v1/brand-master/self`: agora retorna o **BrandMaster do usuário logado** (ou `null` para usuário Vituax sem `idBrandMaster`). Essa rota é usada no boot da aplicação para carregar os dados do MSP e refletir a marca (ex.: logo).
+- Restrição de permissão: alteração de `brandLogo` em `PUT /api/v1/brand-master/:idBrandMaster` é aceita **somente para `admin`** (validação no backend, além do bloqueio na UI).
+- Upload compatível com o frontend:
+  - `POST /api/v1/upload/file` (JWT obrigatório, `multipart/form-data`) retorna `{ objectName, url }`
+  - `GET /api/v1/upload/file/:objectName` resolve `{ url }`
+  - `GET /api/v1/uploads/:objectName` serve o arquivo (público, para permitir exibição de imagens no app)
+
+**Frontend (UI/UX)**
+
+- Tela `Configurações → White Label` já existia e foi **ativada** para:
+  - Upload de logo (com preview) e persistência em `brandMaster.brandLogo` via API.
+  - Bloqueio visual e funcional: **somente admin** consegue fazer upload e salvar (para usuários `manager/member`, os controles ficam desabilitados).
+
+**Solução técnica (resumo)**
+
+- Upload retorna um `objectName` e uma `url` pública; a aplicação salva o `objectName` no `brandLogo` do BrandMaster.
+- Ao carregar o app, `brand-master/self` devolve os dados do BrandMaster, e o frontend resolve o `objectName` para uma URL renderizável.
 
 ---
 

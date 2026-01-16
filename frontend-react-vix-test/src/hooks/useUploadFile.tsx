@@ -14,11 +14,12 @@ export const useUploadFile = () => {
     formData.append("file", file);
 
     setIsUploading(true);
+    // Upload com `FormData` (o `Content-Type` é tratado no client para não quebrar o boundary).
     const response = await api.post<{ objectName: string; url: string }>({
       url: "/upload/file",
       data: formData,
       timeout: 120000,
-      auth: { ...auth, "Content-Type": "multipart/form-data" },
+      auth,
     });
     setIsUploading(false);
 

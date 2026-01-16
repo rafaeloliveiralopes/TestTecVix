@@ -33,6 +33,11 @@ const retryRequest = async <T>({
     const BASE_URL =
       import.meta.env.VITE_BASE_URL || "http://localhost:3001/api/v1";
     const nAuth = baseAuth(auth);
+    // Se for `FormData`, não deve fixar `Content-Type`, 
+    // para o browser/axios setar o boundary corretamente.
+    if (typeof FormData !== "undefined" && data instanceof FormData) {
+      delete (nAuth.headers as Record<string, unknown>)["Content-Type"];
+    }
     const response: { data: T } = await axios({
       ...(timeout && { timeout }),
       method,
@@ -66,6 +71,10 @@ const app = async <T>({
     const BASE_URL =
       import.meta.env.VITE_BASE_URL || "http://localhost:3001/api/v1";
     const nAuth = baseAuth(auth);
+    // Se for `FormData`, não deve fixar `Content-Type`, para o browser/axios setar o boundary corretamente.
+    if (typeof FormData !== "undefined" && data instanceof FormData) {
+      delete (nAuth.headers as Record<string, unknown>)["Content-Type"];
+    }
     const response: { data: T } = await axios({
       ...(timeout && { timeout }),
       method,

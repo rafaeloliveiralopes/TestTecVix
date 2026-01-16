@@ -7,6 +7,7 @@ import { TextRob14Font1Xs } from "../../../../components/Text1Xs";
 import { useZBrandInfo } from "../../../../stores/useZBrandStore";
 import { useBrandMasterResources } from "../../../../hooks/useBrandMasterResources";
 import { AbsoluteBackDrop } from "../../../../components/AbsoluteBackDrop";
+import { useZUserProfile } from "../../../../stores/useZUserProfile";
 
 interface IWhiteLabelChildProps {
   theme: {
@@ -18,6 +19,7 @@ interface IWhiteLabelChildProps {
 export const LeftCardDomain = ({ theme }: IWhiteLabelChildProps) => {
   const { mode } = useZTheme();
   const { t } = useTranslation();
+  const { role, idBrand } = useZUserProfile();
   const {
     brandLogoTemp,
     brandObjectName,
@@ -105,8 +107,10 @@ export const LeftCardDomain = ({ theme }: IWhiteLabelChildProps) => {
           textTransform: "none",
           height: "48px",
           borderRadius: "12px",
+          "&:disabled": { opacity: 0.7, cursor: "not-allowed" },
         }}
         onClick={() => handleSave()}
+        disabled={role !== "admin" || !idBrand}
       >
         {t("whiteLabel.saveChanges")}
       </Button>

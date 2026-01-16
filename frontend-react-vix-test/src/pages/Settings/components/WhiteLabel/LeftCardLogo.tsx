@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { themeColors } from "../../../../stores/useZTheme";
 import { useZBrandInfo } from "../../../../stores/useZBrandStore";
 import { LogoUploadCard } from "../../../../components/LogoUploadCard";
+import { useZUserProfile } from "../../../../stores/useZUserProfile";
 
 interface IWhiteLabelChildProps {
   theme: {
@@ -12,13 +13,16 @@ interface IWhiteLabelChildProps {
 
 export const LeftCardLogo = ({ theme }: IWhiteLabelChildProps) => {
   const { t } = useTranslation();
-  const { setBrandInfo, brandLogoTemp } = useZBrandInfo();
+  const { setBrandInfo, brandLogoTemp, brandLogo } = useZBrandInfo();
+  const { role, idBrand } = useZUserProfile();
+  // White Label só faz sentido para usuário com BrandMaster; e a alteração de logo é exclusiva de admin.
+  const isDisabled = role !== "admin" || !idBrand;
 
   return (
     <>
       <LogoUploadCard
         title={t("whiteLabel.brandLogo")}
-        logoUrl={brandLogoTemp}
+        logoUrl={brandLogoTemp || brandLogo}
         themeOverride={theme}
         onUploaded={({ url, objectName }) =>
           setBrandInfo({
@@ -32,6 +36,7 @@ export const LeftCardLogo = ({ theme }: IWhiteLabelChildProps) => {
             brandObjectName: "",
           })
         }
+        disabled={isDisabled}
       />
     </>
   );

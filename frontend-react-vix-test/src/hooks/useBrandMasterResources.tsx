@@ -157,7 +157,15 @@ export const useBrandMasterResources = () => {
     brandLogo,
     domain,
   }: IUpdateBrandMaster) => {
-    if (!role || (role !== "admin" && role !== "manager")) return;
+    // Regra de negócio (White Label): somente admin pode persistir alterações da marca do BrandMaster.
+    if (role !== "admin") {
+      toast.error(t("generic.errorOlnlyAdmin"));
+      return;
+    }
+    if (!idBrand) {
+      toast.error(t("generic.errorToSaveData"));
+      return;
+    }
     const auth = await getAuth();
     setIsLoading(true);
     const response = await api.put({
