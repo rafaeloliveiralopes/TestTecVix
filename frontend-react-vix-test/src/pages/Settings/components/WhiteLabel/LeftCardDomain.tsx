@@ -28,6 +28,10 @@ export const LeftCardDomain = ({ theme }: IWhiteLabelChildProps) => {
     domain: domainName,
     idBrand,
   } = useZBrandInfo();
+  // Bloco preservado (comentado) de alteração de domínio + registro DNS:
+  // - Foi mantido como referência para possível implementação futura.
+  // - Atualmente foge do escopo solicitado no README para o teste técnico.
+  // - Também depende de uma rota `/dns/register` no backend, que não existe no projeto.
   // const [domain, setDomain] = useState<string>(domainName);
   // const { updateDomain } = useBrandMasterResources();
   const { updateBrandMaster, isLoading } = useBrandMasterResources();
