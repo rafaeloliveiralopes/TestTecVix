@@ -47,7 +47,7 @@ export const PrivatePage = ({
         resetAllStates();
         navigate("/login", { replace: true });
         break;
-      // Evita "piscar" e voltar na navegação enquanto o estado do usuário ainda está hidratando/atualizando
+      // Evita "loop de tela" e voltar na navegação enquanto o estado do usuário ainda está hidratando/atualizando
       case (onlyAdmin || onlyManagerOrAdmin) && role === null:
         return;
       case onlyAdmin && role !== "admin":
