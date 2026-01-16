@@ -51,9 +51,8 @@ export const useListVms = () => {
 
       setIsLoading(false);
       if (response.error) {
-        if (!response.message.includes("expired")) {
-          toast.error(translateBackendError(response.message, t));
-        }
+        const msg = translateBackendError(response.message, t);
+        if (msg) toast.error(msg);
         setVmList([]);
         setVmTotalCount(0);
         setTotalCountVMs(0);

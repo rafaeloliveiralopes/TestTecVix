@@ -182,7 +182,7 @@ export const useBrandMasterResources = () => {
     });
     setIsLoading(false);
     if (response.error) {
-      toast.error(translateBackendError(response.message, t));
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
       return;
     }
     toast.success(t("whiteLabel.dnsSaved"));
@@ -213,7 +213,7 @@ export const useBrandMasterResources = () => {
     });
     setIsLoading(false);
     if (response.error) {
-      toast.error(translateBackendError(response.message, t));
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
       return;
     }
     const dataResponse = response.data;
@@ -268,7 +268,7 @@ export const useBrandMasterResources = () => {
     });
     setIsLoading(false);
     if (response.error) {
-      toast.error(translateBackendError(response.message, t));
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
       return;
     }
 
@@ -318,7 +318,7 @@ export const useBrandMasterResources = () => {
 
     setIsLoading(false);
     if (response.error) {
-      toast.error(translateBackendError(response.message, t));
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
       return;
     }
 
@@ -335,7 +335,7 @@ export const useBrandMasterResources = () => {
     setIsLoading(false);
 
     if (response.error) {
-      toast.error(translateBackendError(response.message, t));
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
 
       return {
         totalCount: 0,
@@ -363,7 +363,7 @@ export const useBrandMasterResources = () => {
 
     setIsLoading(false);
     if (response.error) {
-      toast.error(translateBackendError(response.message, t));
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
       return;
     }
     return response.data;
@@ -409,7 +409,7 @@ export const useBrandMasterResources = () => {
     });
 
     if (response.error) {
-      toast.error(translateBackendError(response.message, t));
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
       return;
     }
 
@@ -429,7 +429,7 @@ export const useBrandMasterResources = () => {
     setIsLoading(false);
 
     if (response.error) {
-      toast.error(translateBackendError(response.message, t));
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
       return null;
     }
     return response.data;

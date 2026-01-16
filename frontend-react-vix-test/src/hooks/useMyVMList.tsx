@@ -38,7 +38,7 @@ export const useMyVMList = () => {
 
       setIsLoading(false);
       if (response.error) {
-        toast.error(translateBackendError(response.message, t));
+        const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
         return { totalCount: 0, vmList: [] };
       }
 

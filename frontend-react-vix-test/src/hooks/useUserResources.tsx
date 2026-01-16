@@ -56,7 +56,7 @@ export const useUserResources = () => {
     setIsLoading(false);
 
     if (response.error) {
-      toast.error(translateBackendError(response.message, t));
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
       return null;
     }
 
@@ -88,7 +88,7 @@ export const useUserResources = () => {
       });
       setIsLoading(false);
       if (response.error) {
-        toast.error(translateBackendError(response.message, t));
+        const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
         return null;
       }
 
@@ -140,7 +140,7 @@ export const useUserResources = () => {
     setIsLoading(false);
 
     if (response.error) {
-      toast.error(translateBackendError(response.message, t));
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
       return null;
     }
 
@@ -170,7 +170,7 @@ export const useUserResources = () => {
     });
     setIsLoading(false);
     if (response.error) {
-      toast.error(translateBackendError(response.message, t));
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
       return null;
     }
 
@@ -193,7 +193,7 @@ export const useUserResources = () => {
     setIsLoading(false);
 
     if (response.error) {
-      toast.error(translateBackendError(response.message, t));
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
       return null;
     }
 
@@ -216,7 +216,7 @@ export const useUserResources = () => {
     setIsLoading(false);
 
     if (response.error) {
-      toast.error(translateBackendError(response.message, t));
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
       return false;
     }
     return true;
