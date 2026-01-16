@@ -389,9 +389,9 @@ O sistema possui três níveis de permissão:
 
 ## 🔑 Credenciais de Teste
 
-> **Importante**: Após implementar o sistema de autenticação, adicione aqui as credenciais de usuários de teste para cada tipo de permissão.
+### Usuários seed (Vituax)
 
-Exemplo:
+> Usuários **sem** `idBrandMaster` (usuários “Vituax”), criados via seed.
 
 ```
 Admin:
@@ -405,6 +405,30 @@ Manager:
 Member:
   Email: member@vituax.com
   Senha: Member@123
+```
+
+### Usuários de teste (MSP Demo Alpha)
+
+> Usuários **com** `idBrandMaster` (vinculados ao MSP), criados via tela `Cadastros → Cadastro de Funcionários`.
+>
+> Observação: mantido o comportamento atual do wizard de MSP: o “admin principal” criado no cadastro de MSP possui senha gerada automaticamente (no frontend) ao retornar para o passo 2. 
+>
+> Mantive assim por sugestão da imagem de referência (campo “Gerada e enviada por e-mail”): [CadastroDeMSPStep02.png](screenshots/CadastroDeMSPStep02.png). 
+>
+>Por isso, para testes, utilize o `admin2@mspdemoalpha.com`.
+
+```
+Admin (MSP Demo Alpha):
+  Email: admin2@mspdemoalpha.com
+  Senha: Admin@123456
+
+Manager (MSP Demo Alpha):
+  Email: gerente@mspdemoalpha.com
+  Senha: Manager@123456
+
+Member (MSP Demo Alpha):
+  Email: membro@mspdemoalpha.com
+  Senha: Member@123456
 ```
 
 ---
@@ -544,7 +568,7 @@ git commit -m "docs: atualiza README com credenciais de teste"
 - [x] Implementar filtros de **search**
 - [x] Implementar flag de **"Mostrar somente os que estão em POC"**
 
-#### Modificações e soluções:
+#### Modificações e soluções
 
 **Cadastro/edição em 2 etapas**: wizard de cadastro de MSP com validações e persistência via API (`POST/PUT /api/v1/brand-master`).
 
@@ -566,7 +590,7 @@ git commit -m "docs: atualiza README com credenciais de teste"
 - [x] Atentar para a **responsividade**
 - [x] Considerar as **traduções** (i18n)
 
-#### Implementações realizadas neste fork
+#### Implementações realizadas
 
 - Rota do frontend: `GET /colaborator-register` (tela privada) para criação/edição/listagem de usuários.
 - Backend: adicionadas colunas no `user` para suportar os campos da UI (`fullName`, `userPhoneNumber`, `field`, `department`, `contractDate`) e o `GET /api/v1/users` passou a **não expor senha**.
