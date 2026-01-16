@@ -150,6 +150,7 @@ export const useBrandMasterResources = () => {
     domain,
   } = useZBrandInfo();
   const { getFileByObjectName } = useUploadFile();
+  const idBrandMaster = idBrandInfo ?? idBrand;
 
   const updateBrandMaster = async ({
     brandName,
@@ -162,14 +163,14 @@ export const useBrandMasterResources = () => {
       toast.error(t("generic.errorOlnlyAdmin"));
       return;
     }
-    if (!idBrand) {
+    if (!idBrandMaster) {
       toast.error(t("generic.errorToSaveData"));
       return;
     }
     const auth = await getAuth();
     setIsLoading(true);
     const response = await api.put({
-      url: `/brand-master/${idBrand}`,
+      url: `/brand-master/${idBrandMaster}`,
       auth,
       data: {
         brandName,
@@ -197,11 +198,15 @@ export const useBrandMasterResources = () => {
       toast.error(t("generic.errorOlnlyAdmin"));
       return;
     }
+    if (!idBrandMaster) {
+      toast.error(t("generic.errorToSaveData"));
+      return;
+    }
 
     const auth = await getAuth();
     setIsLoading(true);
     const response = await api.put<IBrandMasterResource>({
-      url: `/brand-master/${idBrand}`,
+      url: `/brand-master/${idBrandMaster}`,
       auth,
       data,
     });
