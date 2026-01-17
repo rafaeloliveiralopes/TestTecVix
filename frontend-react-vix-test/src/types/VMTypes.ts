@@ -12,6 +12,7 @@ export interface IVMResource {
   hasBackup: boolean;
   os: string;
   pass: string;
+  idBrandMaster?: number | null;
   status?: string | null;
   networkType?: ENetworkType;
   vmLocalization?: { label: string | null; value: unknown } | null;
@@ -27,6 +28,8 @@ export interface IVMResource {
     vmLocalization?: { label: string | null; value: unknown } | null;
   } | null;
 }
+
+export type IVMResourceUpdate = Omit<IVMResource, "pass"> & { pass?: string };
 
 export interface IPortsByRegions {
   idPortsByRegion: number;
@@ -48,6 +51,8 @@ export type TTask =
   | "backup_create"
   | "backup_restore"
   | "backup_delete";
+
+export type TTaskLocation = "bre_barueri" | "usa_miami";
 
 export interface IVMTask {
   action: TAction;
@@ -76,6 +81,7 @@ export interface IVMCreatedResponse {
   user: string;
   vCPU: number;
   status: string | null;
+  location?: TTaskLocation | null;
   idBrandMaster: number | null;
   pass: string | null;
   createdAt: Date | string;

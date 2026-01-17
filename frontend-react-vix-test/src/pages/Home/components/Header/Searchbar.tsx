@@ -1,27 +1,32 @@
 import { IconButton, InputBase, Stack } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useZTheme } from "../../../../stores/useZTheme";
 import { useTranslation } from "react-i18next";
 import { useZGlobalVar } from "../../../../stores/useZGlobalVar";
+import { useLocation } from "react-router-dom";
+import { useZMyVMsList } from "../../../../stores/useZMyVMsList";
 
 export const Searchbar = () => {
   const [search, setSearch] = useState("");
   const { theme, mode } = useZTheme();
   const { t } = useTranslation();
   const { setSearchGlobalHeader } = useZGlobalVar();
+  const { pathname } = useLocation();
+  const { setSearch: setMyVMsSearch } = useZMyVMsList();
 
-  const goSearch = () => {
-    setSearchGlobalHeader(search);
-  };
+  const goSearch = useCallback(() => {
+    const normalized = search.trim();
+    setSearchGlobalHeader(normalized);
+    if (pathname === "/my-virtual-machines") {
+      setMyVMsSearch(normalized.length ? normalized : null);
+    }
+  }, [pathname, search, setMyVMsSearch, setSearchGlobalHeader]);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      goSearch();
-      clearTimeout(timer);
-    }, 500);
+    const timer = setTimeout(goSearch, 500);
     return () => clearTimeout(timer);
-  }, [search]);
+  }, [goSearch]);
 
   useEffect(() => {
     return () => {
@@ -30,7 +35,7 @@ export const Searchbar = () => {
         clearTimeout(timer);
       }, 500);
     };
-  }, []);
+  }, [setSearchGlobalHeader]);
 
   return (
     <Stack

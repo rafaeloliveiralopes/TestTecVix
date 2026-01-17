@@ -7,6 +7,7 @@ import { TextRob14Font1Xs } from "../../../../components/Text1Xs";
 import { useZBrandInfo } from "../../../../stores/useZBrandStore";
 import { useBrandMasterResources } from "../../../../hooks/useBrandMasterResources";
 import { AbsoluteBackDrop } from "../../../../components/AbsoluteBackDrop";
+import { useZUserProfile } from "../../../../stores/useZUserProfile";
 
 interface IWhiteLabelChildProps {
   theme: {
@@ -18,12 +19,19 @@ interface IWhiteLabelChildProps {
 export const LeftCardDomain = ({ theme }: IWhiteLabelChildProps) => {
   const { mode } = useZTheme();
   const { t } = useTranslation();
+  const { role } = useZUserProfile();
   const {
     brandLogoTemp,
     brandObjectName,
+    brandLogoRemoved,
     setBrandInfo,
     domain: domainName,
+    idBrand,
   } = useZBrandInfo();
+  // Bloco preservado (comentado) de alteração de domínio + registro DNS:
+  // - Foi mantido como referência para possível implementação futura.
+  // - Atualmente foge do escopo solicitado no README para o teste técnico.
+  // - Também depende de uma rota `/dns/register` no backend, que não existe no projeto.
   // const [domain, setDomain] = useState<string>(domainName);
   // const { updateDomain } = useBrandMasterResources();
   const { updateBrandMaster, isLoading } = useBrandMasterResources();
@@ -47,14 +55,26 @@ export const LeftCardDomain = ({ theme }: IWhiteLabelChildProps) => {
   // };
 
   const handleSave = async () => {
+    const shouldRemoveLogo = Boolean(brandLogoRemoved);
     const response = await updateBrandMaster({
-      brandLogo: brandObjectName || undefined,
+      brandLogo: shouldRemoveLogo ? null : brandObjectName || undefined,
     });
     if (!response) return;
     setBrandInfo({
-      ...(brandLogoTemp
-        ? { brandLogo: brandLogoTemp, brandLogoTemp: "", brandObjectName: "" }
-        : {}),
+      ...(shouldRemoveLogo
+        ? {
+            brandLogo: "",
+            brandLogoTemp: "",
+            brandObjectName: "",
+            brandLogoRemoved: false,
+          }
+        : brandLogoTemp
+          ? {
+              brandLogo: brandLogoTemp,
+              brandLogoTemp: "",
+              brandObjectName: "",
+            }
+          : {}),
     });
   };
 
@@ -105,8 +125,10 @@ export const LeftCardDomain = ({ theme }: IWhiteLabelChildProps) => {
           textTransform: "none",
           height: "48px",
           borderRadius: "12px",
+          "&:disabled": { opacity: 0.7, cursor: "not-allowed" },
         }}
         onClick={() => handleSave()}
+        disabled={role !== "admin" || !idBrand}
       >
         {t("whiteLabel.saveChanges")}
       </Button>

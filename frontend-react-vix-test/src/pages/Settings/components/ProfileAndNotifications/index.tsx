@@ -4,10 +4,19 @@ import { PersonalInformation } from "./components/PersonalInformation";
 import { NotificationsContact } from "./components/NotificationsContact";
 import { CTAsButtons } from "./components/CTAsButtons";
 import { useZUserProfile } from "../../../../stores/useZUserProfile";
+import { useEffect } from "react";
+import { useUserResources } from "../../../../hooks/useUserResources";
 
 export const ProfileAndNotifications = () => {
   const { mode, theme } = useZTheme();
   const { role } = useZUserProfile();
+  const { getSelf } = useUserResources();
+  const canSeeNotifications = Boolean(role === "admin" || role === "manager");
+
+  useEffect(() => {
+    // Garante que os dados do perfil estejam atualizados ao abrir a aba.
+    void getSelf();
+  }, [getSelf]);
   return (
     <Stack
       sx={{
@@ -26,7 +35,7 @@ export const ProfileAndNotifications = () => {
           background: theme[mode].grayLight,
         }}
       />
-      {Boolean(role === "admin" || role === "manager") && (
+      {canSeeNotifications && (
         <>
           {/* Notifications */}
           <NotificationsContact />

@@ -8,13 +8,14 @@ import { useTranslation } from "react-i18next";
 import { useZBrandInfo } from "../stores/useZBrandStore";
 import { useUploadFile } from "./useUploadFile";
 import { IBrandMasterBasicInfo } from "../types/BrandMasterTypes";
+import { translateBackendError } from "../utils/translateBackendError";
 
 
 interface IUpdateBrandMaster {
   brandName?: string;
   idBrandTheme?: number;
   isActive?: boolean;
-  brandLogo?: string;
+  brandLogo?: string | null;
   domain?: string;
   emailContact?: string;
   cnpj?: string;
@@ -40,6 +41,8 @@ interface IUpdateBrandMaster {
   termsOfUse?: string;
   privacyPolicy?: string;
   retailPercentageDefault?: string | number;
+  hasSelfRegister?: boolean;
+  hasPrepaid?: boolean;
 }
 
 interface IBrandMasterResource {
@@ -93,6 +96,9 @@ interface ICreateNewBrandMaster {
   isPoc?: boolean;
   discountRate?: number;
   minConsumption?: number;
+  retailPercentageDefault?: number;
+  hasSelfRegister?: boolean;
+  hasPrepaid?: boolean;
 }
 
 export interface INewMSPResponse {
@@ -145,6 +151,7 @@ export const useBrandMasterResources = () => {
     domain,
   } = useZBrandInfo();
   const { getFileByObjectName } = useUploadFile();
+  const idBrandMaster = idBrandInfo ?? idBrand;
 
   const updateBrandMaster = async ({
     brandName,
@@ -152,11 +159,19 @@ export const useBrandMasterResources = () => {
     brandLogo,
     domain,
   }: IUpdateBrandMaster) => {
-    if (!role || (role !== "admin" && role !== "manager")) return;
+    // Regra de negócio (White Label): somente admin pode persistir alterações da marca do BrandMaster.
+    if (role !== "admin") {
+      toast.error(t("generic.errorOlnlyAdmin"));
+      return;
+    }
+    if (!idBrandMaster) {
+      toast.error(t("generic.errorToSaveData"));
+      return;
+    }
     const auth = await getAuth();
     setIsLoading(true);
     const response = await api.put({
-      url: `/brand-master/${idBrand}`,
+      url: `/brand-master/${idBrandMaster}`,
       auth,
       data: {
         brandName,
@@ -167,7 +182,7 @@ export const useBrandMasterResources = () => {
     });
     setIsLoading(false);
     if (response.error) {
-      toast.error(response.message);
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
       return;
     }
     toast.success(t("whiteLabel.dnsSaved"));
@@ -184,17 +199,21 @@ export const useBrandMasterResources = () => {
       toast.error(t("generic.errorOlnlyAdmin"));
       return;
     }
+    if (!idBrandMaster) {
+      toast.error(t("generic.errorToSaveData"));
+      return;
+    }
 
     const auth = await getAuth();
     setIsLoading(true);
     const response = await api.put<IBrandMasterResource>({
-      url: `/brand-master/${idBrand}`,
+      url: `/brand-master/${idBrandMaster}`,
       auth,
       data,
     });
     setIsLoading(false);
     if (response.error) {
-      toast.error(response.message);
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
       return;
     }
     const dataResponse = response.data;
@@ -249,7 +268,7 @@ export const useBrandMasterResources = () => {
     });
     setIsLoading(false);
     if (response.error) {
-      toast.error(response.message);
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
       return;
     }
 
@@ -273,7 +292,7 @@ export const useBrandMasterResources = () => {
         idBrandTheme: 1,
         isActive: true,
         brandLogo: data.brandLogo,
-        domain: undefined,
+        domain: data.mspDomain,
         setorName: data.sector,
         fieldName: undefined,
         location: data.locality,
@@ -291,12 +310,15 @@ export const useBrandMasterResources = () => {
         isPoc: Boolean(data?.isPoc),
         discountRate: data?.discountRate,
         minConsumption: data?.minConsumption,
+        retailPercentageDefault: data?.retailPercentageDefault,
+        hasSelfRegister: data?.hasSelfRegister,
+        hasPrepaid: data?.hasPrepaid,
       },
     });
 
     setIsLoading(false);
     if (response.error) {
-      toast.error(response.message);
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
       return;
     }
 
@@ -310,10 +332,10 @@ export const useBrandMasterResources = () => {
       url: "/brand-master",
       auth,
     });
-    setIsLoading(true);
+    setIsLoading(false);
 
     if (response.error) {
-      toast.error(response.message);
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
 
       return {
         totalCount: 0,
@@ -326,7 +348,7 @@ export const useBrandMasterResources = () => {
   const deleteBrandMaster = async (brandMasterId: number | string) => {
     if (!brandMasterId) return null;
 
-    if (role !== "admin" && role !== "manager") {
+    if (role !== "admin") {
       toast.error(t("generic.errorOlnlyAdmin"));
       return;
     }
@@ -341,7 +363,7 @@ export const useBrandMasterResources = () => {
 
     setIsLoading(false);
     if (response.error) {
-      toast.error(response.message);
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
       return;
     }
     return response.data;
@@ -374,19 +396,20 @@ export const useBrandMasterResources = () => {
         placeNumber: data.placeNumber,
         smsContact: data.smsContact,
         brandLogo: data.brandLogo,
+        domain: data.domain,
         cityCode: data?.cityCode ? data.cityCode : undefined,
         district: data?.district ? data.district : undefined,
         isPoc: Boolean(data?.isPoc),
         discountRate: data?.discountRate,
         minConsumption: data?.minConsumption,
-        retailPercentageDefault: Number(data?.retailPercentageDefault)
-          ? Number(data?.retailPercentageDefault)
-          : undefined,
+        retailPercentageDefault: data?.retailPercentageDefault,
+        hasSelfRegister: data?.hasSelfRegister,
+        hasPrepaid: data?.hasPrepaid,
       },
     });
 
     if (response.error) {
-      toast.error(response.message);
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
       return;
     }
 
@@ -403,10 +426,10 @@ export const useBrandMasterResources = () => {
       url: `/brand-master/${idBrand}`,
       auth,
     });
-    setIsLoading(true);
+    setIsLoading(false);
 
     if (response.error) {
-      toast.error(response.message);
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
       return null;
     }
     return response.data;
@@ -425,6 +448,7 @@ export const useBrandMasterResources = () => {
   };
 };
 
+// [NOTA] Bloco comentado desde o commit inicial (dc1d807). Mantido como referência.
 /*
 export const brandMasterSchema = z.object({
   brandName: z.string().nullable().optional(),

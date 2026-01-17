@@ -10,13 +10,15 @@ import { UploadFileIcon } from "../../../../../icons/UploadFileIcon";
 import { TextRob12Font2Xs } from "../../../../../components/Text2Xs";
 import { CircleIcon } from "../../../../../icons/CircleIcon";
 import { useZUserProfile } from "../../../../../stores/useZUserProfile";
+import { ImgFromDB } from "../../../../../components/ImgFromDB";
 
 export const PerfilPhotoUpload = () => {
   const { theme, mode } = useZTheme();
   const { t } = useTranslation();
   const { handleUpload, isUploading } = useUploadFile();
   const [uploadedFile, setUploadedFile] = useState<string | null>("");
-  const { setImage } = useZUserProfile();
+  const { setImage, profileImgUrl, imageUrl, setUser, profileImgRemoved } =
+    useZUserProfile();
 
   const onDrop = async (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) return;
@@ -30,6 +32,7 @@ export const PerfilPhotoUpload = () => {
         imageUrl: response.url,
         objectName: response.objectName,
       });
+      setUser({ profileImgRemoved: false });
     }
   };
 
@@ -38,6 +41,8 @@ export const PerfilPhotoUpload = () => {
       imageUrl: "",
       objectName: "",
     });
+    // Marca remoção para persistir `profileImgUrl: null` no salvar.
+    setUser({ profileImgRemoved: true });
     setUploadedFile("");
   };
 
@@ -117,6 +122,38 @@ export const PerfilPhotoUpload = () => {
             />
           </Box>
         )}
+        {!uploadedFile && !profileImgRemoved && (imageUrl || profileImgUrl) ? (
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              marginBottom: "24px",
+            }}
+          >
+            {imageUrl ? (
+              <img
+                src={imageUrl}
+                alt="Foto de perfil"
+                style={{
+                  maxWidth: "100%",
+                  maxHeight: "100px",
+                  objectFit: "contain",
+                }}
+              />
+            ) : profileImgUrl ? (
+              <ImgFromDB
+                src={profileImgUrl}
+                alt="Foto de perfil"
+                style={{
+                  maxWidth: "100%",
+                  maxHeight: "100px",
+                  objectFit: "contain",
+                }}
+              />
+            ) : null}
+          </Box>
+        ) : null}
         <Stack sx={{ gap: "32px" }}>
           {/* above stack buttons of change and remove logo */}
           <Stack

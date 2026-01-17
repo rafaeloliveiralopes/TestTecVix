@@ -15,6 +15,7 @@ export const errorHandler = (
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _next: NextFunction,
 ) => {
+  // centralized error handling
   if (err instanceof AppError) {
     const { status, message } = err;
     return res.status(status).json({ message });

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo } from "react";
 import {
   XAxis,
   YAxis,
@@ -17,7 +17,40 @@ import { useZGlobalVar } from "../../../../stores/useZGlobalVar";
 import { IFormatData } from "../../../../types/socketType";
 
 export const MainGraphic = () => {
-  const [chartData] = useState<IFormatData[]>([]);
+  const { currentIdVM, currentVMName: vmName } = useZGlobalVar();
+  const chartData = useMemo<IFormatData[]>(() => {
+    if (!currentIdVM) return [];
+
+    // Mock do gráfico de CPU: gera uma série temporal determinística baseada no `currentIdVM`
+    // para que a UI funcione sem depender de socket/backend (Gráfico mocado)
+    let seed = currentIdVM;
+    const rand = () => {
+      seed = (seed * 9301 + 49297) % 233280;
+      return seed / 233280;
+    };
+
+    const clamp = (value: number, min: number, max: number) =>
+      Math.max(min, Math.min(max, value));
+
+    const formatTime = (date: Date) =>
+      date.toLocaleTimeString("pt-BR", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+      });
+
+    const points = 24;
+    let lastValue = clamp(rand() * 60, 0, 100);
+
+    return Array.from({ length: points }, (_item, index) => {
+      // Aplica uma variação suave (jitter) e limita em 0–100% para simular uso real de CPU.
+      const jitter = (rand() - 0.5) * 16;
+      lastValue = clamp(lastValue + jitter, 0, 100);
+      const time = new Date(Date.now() - (points - 1 - index) * 1000);
+      return { time: formatTime(time), value: Number(lastValue.toFixed(3)) };
+    });
+  }, [currentIdVM]);
   const { theme, mode } = useZTheme();
   const { t } = useTranslation();
 
@@ -29,8 +62,6 @@ export const MainGraphic = () => {
       : lastCpuUsage < 90
         ? theme[mode].warning
         : theme[mode].danger;
-
-  const { currentVMName: vmName } = useZGlobalVar();
 
   // if (!chartData.length) return <EmptyFeedBack />;
 

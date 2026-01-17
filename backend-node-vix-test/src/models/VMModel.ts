@@ -2,7 +2,7 @@ import { prisma } from "../database/client";
 import { TVMCreate } from "../types/validations/VM/createVM";
 import { TVMUpdate } from "../types/validations/VM/updateVM";
 import { IListAllVM } from "../types/IListAll";
-import moment from "moment";
+// import moment from "moment";
 
 export class VMModel {
   async getById(idVM: number) {
@@ -12,14 +12,20 @@ export class VMModel {
   }
 
   async totalCount({ query, idBrandMaster }: IListAllVM) {
-    const { status, idBrandMaster: idBrandMasterParams } = query;
-    const isRetriveAllCompanies = idBrandMaster === idBrandMasterParams;
+    const { status, idBrandMaster: requestedBrandMasterId } = query;
+    const userBrandMasterId = idBrandMaster ?? undefined; // null = usuário Vituax (sem restrição)
+    const effectiveBrandMasterId =
+      userBrandMasterId !== undefined
+        ? userBrandMasterId
+        : requestedBrandMasterId;
 
     return prisma.vM.count({
       where: {
         deletedAt: null,
         idBrandMaster:
-          !idBrandMaster && isRetriveAllCompanies ? undefined : idBrandMaster,
+          effectiveBrandMasterId !== undefined
+            ? effectiveBrandMasterId
+            : undefined,
         status,
         vmName: {
           contains: query.search,
@@ -31,19 +37,25 @@ export class VMModel {
   async listAll({ query, idBrandMaster }: IListAllVM) {
     const limit = query.limit || 0;
     const skip = query.page ? query.page * limit : query.offset || 0;
-    const { status, idBrandMaster: idBrandMasterParams } = query;
+    const { status, idBrandMaster: requestedBrandMasterId } = query;
     const orderBy =
       query.orderBy?.map(({ field, direction }) => ({
         [field]: direction,
       })) || [];
 
-    const isRetriveAllCompanies = idBrandMaster === idBrandMasterParams;
+    const userBrandMasterId = idBrandMaster ?? undefined; // null = usuário Vituax (sem restrição)
+    const effectiveBrandMasterId =
+      userBrandMasterId !== undefined
+        ? userBrandMasterId
+        : requestedBrandMasterId;
 
     const vms = await prisma.vM.findMany({
       where: {
         deletedAt: null,
         idBrandMaster:
-          !idBrandMaster && isRetriveAllCompanies ? undefined : idBrandMaster,
+          effectiveBrandMasterId !== undefined
+            ? effectiveBrandMasterId
+            : undefined,
         status,
         vmName: {
           contains: query.search,

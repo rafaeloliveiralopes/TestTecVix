@@ -35,6 +35,7 @@
   "emailAlertMessage": "Por favor, introduzca un correo electrónico válido",
   "cnpjAlertMessage": "Por favor, introduzca un NIF válido",
   "companyName": "Nombre de la Empresa",
+  "vituaxCompany": "Vituax",
   "username": "Nombre de Usuario",
   "password": "Contraseño",
   "confirmPassword": "Confirmar contraseño",

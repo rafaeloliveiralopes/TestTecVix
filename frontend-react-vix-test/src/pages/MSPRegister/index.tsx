@@ -16,6 +16,7 @@ import { ModalDeleteVMsFromMSP } from "./ModalDeleteVMsFromMSP";
 import { useBrandMasterResources } from "../../hooks/useBrandMasterResources";
 import { AbsoluteBackDrop } from "../../components/AbsoluteBackDrop";
 import { useVmResource } from "../../hooks/useVmResource";
+import { MspRegisterWizard } from "./MspRegisterWizard";
 
 export const MSPRegisterPage = () => {
   const { theme, mode } = useZTheme();
@@ -41,6 +42,7 @@ export const MSPRegisterPage = () => {
   const resetAllStepStates = () => {
     setIsEditing([]);
     setActiveStep(0);
+    setModalOpen(null);
     resetAll();
   };
 
@@ -122,6 +124,9 @@ export const MSPRegisterPage = () => {
           boxSizing: "border-box",
         }}
       >
+        <MspRegisterWizard
+          onUserAdminNotCreated={() => setOpenModalUserNotCreated(true)}
+        />
         {
           <Stack
             sx={{

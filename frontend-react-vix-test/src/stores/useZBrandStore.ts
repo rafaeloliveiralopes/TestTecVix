@@ -10,14 +10,16 @@ export interface IBrandInfo {
   brandSite?: string;
   brandPrivacyPolicy?: string;
   brandObjectName?: string;
+  // Flag para garantir persistência correta quando o usuário optar por remover a logo.
+  brandLogoRemoved?: boolean;
   domain?: string;
-  setorName?: string; //***** Incuir no DB */
+  setorName?: string; // Incuir no DB 
   fieldName?: string;
   location?: string;
   city?: string;
   emailContact?: string;
   smsContact?: string;
-  timezone?: string; //****************** */
+  timezone?: string;
   stripeUserId?: null | string;
   discountRate?: number;
   manual?: null | string;
@@ -33,6 +35,7 @@ const INIT_STATE: IBrandInfo = {
   brandLogo: "",
   brandLogoTemp: "",
   brandObjectName: "",
+  brandLogoRemoved: false,
   domain: "",
   brandContact: "https://www.vituax.com/contato/",
   brandSite: "https://vituax.com",

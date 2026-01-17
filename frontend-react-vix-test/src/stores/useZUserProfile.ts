@@ -5,9 +5,12 @@ export type TRole = "admin" | "manager" | "member";
 
 export interface IUserProfile {
   idUser: number | null;
+  fullName?: string | null;
   profileImgUrl: string | null;
   objectName?: string;
   imageUrl?: string;
+  // Controle local: indica que o usuário pediu para remover a imagem atual.
+  profileImgRemoved?: boolean;
   username: string | null;
   isActive?: boolean;
   lastLoginDate?: string | Date;
@@ -19,9 +22,11 @@ export interface IUserProfile {
 }
 const INIT_STATE: IUserProfile = {
   idUser: null,
+  fullName: null,
   profileImgUrl: null,
   objectName: "",
   imageUrl: "",
+  profileImgRemoved: false,
   username: null,
   userEmail: null,
   userPhoneNumber: null,

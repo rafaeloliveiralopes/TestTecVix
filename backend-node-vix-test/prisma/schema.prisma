@@ -19,6 +19,7 @@ datasource db {
 model brandMaster {
   idBrandMaster Int       @id @default(autoincrement())
   brandName     String?
+  idBrandTheme  Int?
   isActive      Boolean?  @default(true)
   createdAt     DateTime? @default(now()) @db.DateTime(0)
   updatedAt     DateTime? @default(now()) @db.DateTime(0)
@@ -40,7 +41,13 @@ model brandMaster {
   cityCode      Int?
   district      String?
   stripeUserId  String?
+  isStripeActive Boolean? @default(false)
   isPoc         Boolean?  @default(false)
+  discountRate  Float?    @default(1)
+  minConsumption Float?   @default(0)
+  hasSelfRegister Boolean? @default(false)
+  hasPrepaid     Boolean? @default(false)
+  retailPercentageDefault Float? @default(1)
   contract      String?
   contractAt    DateTime? @db.DateTime(0)
   pocOpenedAt   DateTime? @db.DateTime(0)
@@ -57,7 +64,9 @@ model vM {
   vCPU          Int
   ram           Int
   disk          Int
+  pass          String?
   hasBackup     Boolean?     @default(false)
+  location      ETaskLocation?
   idBrandMaster Int?
   status        EVMStatus?
   createdAt     DateTime?    @default(now()) @db.DateTime(0)
@@ -75,6 +84,11 @@ model user {
   password      String
   email         String
   profileImgUrl String?
+  userPhoneNumber String?
+  field         String?
+  department    String?
+  contractDate  DateTime? @db.DateTime(0)
+  fullName      String?
   role          ERole     @default(member)
   idBrandMaster Int?
   isActive      Boolean?  @default(true)
@@ -92,6 +106,11 @@ enum EVMStatus {
   RUNNING
   STOPPED
   PAUSED
+}
+
+enum ETaskLocation {
+  bre_barueri
+  usa_miami
 }
 
 enum ERole {

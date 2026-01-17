@@ -21,6 +21,7 @@ interface IMspRegisterPage {
   admPhone: string;
   position: string;
   admPassword: string;
+  admUsername: string;
   showError: boolean;
   showErrorPageTwo: boolean;
   mspDomain: string;
@@ -67,6 +68,7 @@ const INIT_STATE: IMspRegisterPage = {
   admPhone: "",
   position: "admin",
   admPassword: "",
+  admUsername: "",
   showError: false,
   mspDomain: "",
   showErrorPageTwo: false,
@@ -99,11 +101,13 @@ const {
   activeStep: _activeStep,
   mspList: _mspList,
   isEditing: _isEditing,
+  modalOpen: _modalOpen,
   ...resetState
 } = INIT_STATE;
 void _activeStep;
 void _mspList;
 void _isEditing;
+void _modalOpen;
 
 interface IMspRegisterPageState extends IMspRegisterPage {
   setActiveStep: (activeStep: 0 | 1) => void;
@@ -124,6 +128,7 @@ interface IMspRegisterPageState extends IMspRegisterPage {
   setPosition: (position: string) => void;
   setMSPDomain: (domain: string) => void;
   setAdmPassword: (admPassword: string) => void;
+  setAdmUsername: (admUsername: string) => void;
   setShowError: (showError: boolean) => void;
   setShowErrorPageTwo: (showError: boolean) => void;
   resetAll: () => void;
@@ -190,6 +195,8 @@ export const useZMspRegisterPage = create<IMspRegisterPageState>((set) => ({
     set((state) => ({ ...state, mspDomain: domain })),
   setAdmPassword: (admPassword: string) =>
     set((state) => ({ ...state, admPassword })),
+  setAdmUsername: (admUsername: string) =>
+    set((state) => ({ ...state, admUsername })),
   setShowError: (showError: boolean) =>
     set((state) => ({ ...state, showError })),
   setShowErrorPageTwo: (showErrorPageTwo: boolean) =>

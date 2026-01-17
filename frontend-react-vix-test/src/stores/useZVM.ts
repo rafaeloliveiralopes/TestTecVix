@@ -12,6 +12,8 @@ export interface IVMForm {
   vmvCpu: number;
   vmMemory: number;
   vmDisk: number;
+  // Tipo de armazenamento selecionado no formulário (ex: SSD/HD).
+  vmStorageType: TOptions | null;
   vmLocalization: TOptions | null;
   hasBackup: boolean;
   vmNetwork: IGenericOptionsTyped<ENetworkType> | null;
@@ -31,6 +33,7 @@ const INIT_STATE: IVMForm = {
   vmvCpu: 1,
   vmMemory: 1,
   vmDisk: 20,
+  vmStorageType: null,
   vmLocalization: null,
   hasBackup: false,
   vmNetwork: null,
@@ -51,6 +54,7 @@ interface IVMFormState extends IVMForm {
   setVmvCpu(vmvCpu: number): void;
   setVmMemory(vmMemory: number): void;
   setVmDisk(vmDisk: number): void;
+  setVmStorageType(vmStorageType: TOptions | null): void;
   setVmLocalization(vmLocalization: TOptions | null): void;
   setHasBackup(hasBackup: boolean): void;
   setVmNetwork(vmNetwork: IGenericOptionsTyped<ENetworkType> | null): void;
@@ -75,6 +79,8 @@ export const useZVM = create<IVMFormState>((set) => ({
   setVmvCpu: (vmvCpu) => set((state) => ({ ...state, vmvCpu })),
   setVmMemory: (vmMemory) => set((state) => ({ ...state, vmMemory })),
   setVmDisk: (vmDisk) => set((state) => ({ ...state, vmDisk })),
+  setVmStorageType: (vmStorageType) =>
+    set((state) => ({ ...state, vmStorageType })),
   setVmLocalization: (vmLocalization) =>
     set((state) => ({ ...state, vmLocalization })),
   setHasBackup: (hasBackup) => set((state) => ({ ...state, hasBackup })),

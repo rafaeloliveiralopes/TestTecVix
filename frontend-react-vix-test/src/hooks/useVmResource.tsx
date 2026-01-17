@@ -7,11 +7,13 @@ import { useAuth } from "./useAuth";
 import { useState } from "react";
 import { passwordRegex, validatePassword } from "../utils/genStrongPass";
 import { MIN_PASS_SIZE } from "../configs/contants";
+import { translateBackendError } from "../utils/translateBackendError";
 
 import {
   ENetworkType,
   IVMCreatedResponse,
   IVMResource,
+  IVMResourceUpdate,
 } from "../types/VMTypes";
 import { EOS } from "../stores/useZVMSugestion";
 
@@ -73,6 +75,15 @@ export const useVmResource = () => {
     },
   ];
 
+  // Padrão do projeto: o `os` das VMs é um código (ex: `ubuntu2404`, `debian12`).
+  // O dropdown usa como fonte os valores já padronizados no enum `EOS`.
+  const osOptions: { value: EOS; label: string }[] = (Object.values(EOS) as EOS[])
+    .filter((os) => os !== EOS.notFound)
+    .map((os) => ({
+      value: os,
+      label: os,
+    }));
+
   const localizationOptions: { value: ETaskLocation; label: string }[] = [
     {
       value: ETaskLocation.usa_miami,
@@ -131,12 +142,15 @@ export const useVmResource = () => {
       url: "/vm",
       data: {
         ...vm,
+        // Garante vínculo com o BrandMaster do usuário logado quando o frontend não envia esse valor.
+        idBrandMaster:
+          vm.idBrandMaster !== undefined ? vm.idBrandMaster : idBrand ?? null,
       },
       auth,
     });
 
     if (response.error) {
-      toast.error(response.message);
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
       setIsLoadingCreateVM(false);
       return;
     }
@@ -159,7 +173,7 @@ export const useVmResource = () => {
       auth,
     });
     if (response.error) {
-      toast.error(response.message);
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
       return;
     }
 
@@ -181,7 +195,7 @@ export const useVmResource = () => {
       auth,
     });
     if (response.error) {
-      toast.error(response.message);
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
       return null;
     }
 
@@ -203,7 +217,7 @@ export const useVmResource = () => {
     });
 
     if (response.error) {
-      toast.error(response.message);
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
       return;
     }
 
@@ -221,14 +235,14 @@ export const useVmResource = () => {
     });
     setIsLoading(false);
     if (response.error) {
-      toast.error(response.message);
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
       return;
     }
 
     return response.data;
   };
 
-  const updateVM = async (vm: IVMResource, idVM: number) => {
+  const updateVM = async (vm: IVMResourceUpdate, idVM: number) => {
     const auth = await getAuth();
     setIsLoadingUpdateVM(true);
     const [response] = await Promise.all([
@@ -244,12 +258,12 @@ export const useVmResource = () => {
 
     setIsLoadingUpdateVM(false);
     if (response.error) {
-      toast.error(response.message);
-      return;
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
+      return null;
     }
 
     toast.success(t("createVm.updateVmSuccess"));
-    return;
+    return response.data;
   };
 
   const deleteVM = async (idVM: number) => {
@@ -262,7 +276,7 @@ export const useVmResource = () => {
       auth,
     });
     if (response.error) {
-      toast.error(response.message);
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
       return setIsLoadingDeleteVM(false);
     }
 
@@ -318,7 +332,7 @@ export const useVmResource = () => {
       auth,
     });
     if (response.error) {
-      toast.error(response.message);
+      const msg = translateBackendError(response.message, t); if (msg) toast.error(msg);
       return false;
     }
     return Boolean(response.data);
@@ -335,6 +349,7 @@ export const useVmResource = () => {
     getOS,
     getNetworkType,
     storageOptions,
+    osOptions,
     localizationOptions,
     isLoading,
     networkTypeOptions,

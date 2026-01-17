@@ -5,6 +5,7 @@ export enum EOS {
   ubuntu2204 = "ubuntu2204",
   ubuntu2004 = "ubuntu2004",
   debian12 = "debian12",
+  debian13 = "debian13",
   debian11 = "debian11",
   opensuse = "opensuse",
   archlinux = "archlinux",

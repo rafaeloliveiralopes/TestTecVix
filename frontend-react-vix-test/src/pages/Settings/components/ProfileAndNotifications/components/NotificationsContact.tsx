@@ -12,6 +12,9 @@ import {
 } from "../../../../../stores/useZFormProfileNotifications";
 import { useZBrandInfo } from "../../../../../stores/useZBrandStore";
 import { useEffect } from "react";
+import { maskPhone } from "../../../../../utils/maskPhone";
+import { TextRob12Font2Xs } from "../../../../../components/Text2Xs";
+import { useZUserProfile } from "../../../../../stores/useZUserProfile";
 
 export const NotificationsContact = () => {
   const { t } = useTranslation();
@@ -19,13 +22,18 @@ export const NotificationsContact = () => {
   const { timeZones } = useGenericResources();
   const { companyEmail, companySMS, timeZone, setFormProfileNotifications } =
     useZFormProfileNotifications();
-  const { emailContact, smsContact, timezone } = useZBrandInfo();
+  const { idBrand: idBrandInfo, emailContact, smsContact, timezone } =
+    useZBrandInfo();
+  const { idBrand: idBrandUser } = useZUserProfile();
   const { contactEmail, phoneNumber } = {
     contactEmail: emailContact,
     phoneNumber: smsContact,
   };
+  const hasBrandMaster = Boolean(idBrandInfo ?? idBrandUser);
 
   const validEmail = () => {
+    // Usuários Vituax (sem BrandMaster) não possuem onde persistir notificações corporativas.
+    if (!hasBrandMaster) return;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Regex para validar email
     if (!companyEmail.value) {
       return setFormProfileNotifications({
@@ -58,6 +66,9 @@ export const NotificationsContact = () => {
   };
 
   const validPhoneNumber = () => {
+    // Usuários Vituax (sem BrandMaster) não possuem onde persistir notificações corporativas.
+    if (!hasBrandMaster) return;
+    const digits = companySMS.value.replace(/\D/g, "");
     if (!companySMS.value) {
       return setFormProfileNotifications({
         companySMS: {
@@ -66,18 +77,8 @@ export const NotificationsContact = () => {
         },
       });
     }
-    const phoneRegex = /^\d+$/; // Regex para validar telefone com 10 ou 11 dígitos
-
-    if (!companySMS.value) {
-      return setFormProfileNotifications({
-        companySMS: {
-          ...companySMS,
-          errorMessage: t("profileAndNotifications.requiredField"),
-        },
-      });
-    }
-
-    if (!phoneRegex.test(companySMS.value) || companySMS.value.length > 20) {
+    // Usa o mesmo padrão de telefone das telas de cadastro
+    if (digits.length !== 10 && digits.length !== 11) {
       return setFormProfileNotifications({
         companySMS: {
           ...companySMS,
@@ -99,9 +100,16 @@ export const NotificationsContact = () => {
     key: keyof IFormProfileNotificationsVar,
     val: string,
   ) => {
+    // Mantém o formato `{ value, errorMessage }` do campo, preservando o erro atual.
+    const fieldMap = {
+      companyEmail,
+      companySMS,
+      timeZone,
+    } as const;
+    const currentField = fieldMap[key as keyof typeof fieldMap];
     setFormProfileNotifications({
       [key]: {
-        ...[key],
+        ...currentField,
         value: val,
       },
     });
@@ -110,22 +118,28 @@ export const NotificationsContact = () => {
   useEffect(() => {
     setFormProfileNotifications({
       companyEmail: {
-        ...companyEmail,
         value: contactEmail || emailContact || "",
+        // Quando não há BrandMaster, evita manter erros antigos no estado.
         errorMessage: "",
       },
       companySMS: {
-        ...companySMS,
         value: phoneNumber || smsContact || "",
         errorMessage: "",
       },
       timeZone: {
-        ...timeZone,
         value: timezone || "",
         errorMessage: "",
       },
     });
-  }, []);
+  }, [
+    contactEmail,
+    emailContact,
+    hasBrandMaster,
+    phoneNumber,
+    setFormProfileNotifications,
+    smsContact,
+    timezone,
+  ]);
 
   return (
     <Stack
@@ -148,6 +162,13 @@ export const NotificationsContact = () => {
         >
           {t("profileAndNotifications.notifications")}
         </TextRob16FontL>
+        {!hasBrandMaster ? (
+          <TextRob12Font2Xs sx={{ color: theme[mode].gray }}>
+            Notificações corporativas são configuradas no nível do MSP (BrandMaster).
+            Como este usuário não está vinculado a um MSP, estas alterações não serão
+            persistidas.
+          </TextRob12Font2Xs>
+        ) : null}
       </Stack>
       {/* Inputs */}
       <Stack
@@ -163,6 +184,7 @@ export const NotificationsContact = () => {
           label={t("profileAndNotifications.email")}
           value={companyEmail.value}
           onChange={(val) => handleChange("companyEmail", val)}
+          placeholder={"contato@email.com"}
           errorMessage={companyEmail.errorMessage}
           onBlur={() => validEmail()}
           icon={
@@ -178,7 +200,8 @@ export const NotificationsContact = () => {
         <InputLabelAndFeedback
           label={t("profileAndNotifications.sms")}
           value={companySMS.value}
-          onChange={(val) => handleChange("companySMS", val)}
+          onChange={(val) => handleChange("companySMS", maskPhone(val))}
+          placeholder={"(00) 00000-0000"}
           errorMessage={companySMS.errorMessage}
           onBlur={() => validPhoneNumber()}
           icon={

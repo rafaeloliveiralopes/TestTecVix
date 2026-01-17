@@ -1,9 +1,13 @@
-import { Router } from "express";
+import { Response, Router } from "express";
 import { BrandMasterController } from "../controllers/BrandMasterController";
 import { API_VERSION, ROOT_PATH } from "../constants/basePathRoutes";
-// import { isManagerOrIsAdmin } from "../auth/isManagerOrIsAdmin";
-// import { isAdmin } from "../auth/isAdmin";
+import { isManagerOrIsAdmin } from "../auth/isManagerOrIsAdmin";
+import { isAdmin } from "../auth/isAdmin";
 // import { authUser } from "../auth/authUser";
+import { CustomRequest } from "../types/custom";
+import { ParamsDictionary } from "express-serve-static-core";
+import { user } from "@prisma/client";
+import { TBrandMaster } from "../types/validations/BrandMaster/createBrandMaster";
 
 const BASE_PATH = API_VERSION.V1 + ROOT_PATH.BRANDMASTER; // /api/v1/brand-master
 
@@ -38,8 +42,11 @@ brandMasterRoutes.get(
 brandMasterRoutes.post(
   `${BASE_PATH}`,
   // authUser,
-  // isManagerOrIsAdmin,
-  async (req, res) => {
+  isManagerOrIsAdmin,
+  async (
+    req: CustomRequest<user, ParamsDictionary, unknown, TBrandMaster>,
+    res: Response,
+  ) => {
     await brandMasterController.createNewBrandMaster(req, res);
   },
 );
@@ -47,8 +54,11 @@ brandMasterRoutes.post(
 brandMasterRoutes.put(
   `${BASE_PATH}/:idBrandMaster`,
   // authUser,
-  // isManagerOrIsAdmin,
-  async (req, res) => {
+  isManagerOrIsAdmin,
+  async (
+    req: CustomRequest<user, { idBrandMaster: string }, unknown, TBrandMaster>,
+    res: Response,
+  ) => {
     await brandMasterController.updateBrandMaster(req, res);
   },
 );
@@ -56,8 +66,11 @@ brandMasterRoutes.put(
 brandMasterRoutes.delete(
   `${BASE_PATH}/:idBrandMaster`,
   // authUser,
-  // isAdmin,
-  async (req, res) => {
+  isAdmin,
+  async (
+    req: CustomRequest<user, { idBrandMaster: string }>,
+    res: Response,
+  ) => {
     await brandMasterController.deleteBrandMaster(req, res);
   },
 );

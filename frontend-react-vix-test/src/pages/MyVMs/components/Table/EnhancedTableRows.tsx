@@ -13,7 +13,7 @@ export const EnhancedTableRows = () => {
       }}
     >
       {vmList.map((row, index) => (
-        <RowVM key={`row-${index}-${row.idVM}`} vm={row} index={index} />
+        <RowVM key={`row-${row.idVM}`} vm={row} index={index} />
       ))}
     </TableBody>
   );
