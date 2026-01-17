@@ -156,13 +156,24 @@ O valor impresso deve corresponder à configuração definida no `.env`.
 
 ### Execução dos testes
 
-Para rodar os testes automatizados:
+Para rodar a suíte completa de testes automatizados:
 
 ```bash
 npm test
 ```
 
-Para rodar apenas os testes de integração criados para os endpoints de autenticação:
+Este comando executa:
+
+- **Testes E2E** - Validam fluxo completo da API (app.test.ts)
+- **Testes de integração** - Verificam interação entre camadas (Auth, AuthLogin, AuthProtect, BrandMaster, UserCrudPerm, VM)
+- **Testes unitários** - Cobrem services, controllers, middlewares e utils (22 arquivos de teste)
+- **Coverage report** - Threshold mínimo de 70% configurado; cobertura atual ~87% statements, ~73% branches, ~72% functions
+
+---
+
+#### Rodar testes específicos
+
+Para executar apenas os testes de integração de autenticação:
 
 - Registro (`POST /api/v1/auth/register`):
 
@@ -176,10 +187,28 @@ npx jest __tests__/integrations/Auth.test.ts -i --runInBand
 npx jest __tests__/integrations/AuthLogin.test.ts -i --runInBand
 ```
 
-Observações:
+Para rodar apenas testes unitários de um serviço específico:
+
+```bash
+npx jest __tests__/services/VMService.test.ts
+```
+
+Para visualizar relatório detalhado de coverage:
+
+```bash
+npm test -- --coverage
+```
+
+O relatório HTML será gerado em `coverage/lcov-report/index.html`.
+
+---
+
+#### Observações sobre os testes
 
 - O teste `__tests__/integrations/Auth.test.ts` utiliza `prismaMock` (arquivo `__tests__/singleton.ts`) para isolar chamadas ao Prisma e não exige um banco de dados real quando executado isoladamente.
 - Para rodar a suíte completa (que pode incluir testes que dependem do banco), siga o fluxo de setup do banco e do Prisma descrito na seção **Setup inicial do ambiente**.
+- Os thresholds de cobertura estão configurados em `jest.config.js` com valores mínimos de 70% para statements, branches, functions e lines.
+- Todos os testes unitários utilizam mocks do Jest para isolar dependências externas (Prisma, Axios, filesystem).
 
 ---
 
