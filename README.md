@@ -55,14 +55,16 @@ Você pode criar, instalar e utilizar outras bibliotecas, porém o **foco princi
 
 **ATENÇÃO**: Você deve fazer um **fork** deste repositório para sua própria conta do GitHub.
 
-#### Passos para começar:
+#### Passos para começar
 
 1. **Faça o fork** deste repositório para sua conta pessoal do GitHub
 2. **Clone o seu fork** (não o repositório original):
+
    ```bash
    git clone https://github.com/SEU-USUARIO/TestTecVix.git
    cd TestTecVix
    ```
+
 3. Trabalhe no **seu repositório** seguindo o fluxo de desenvolvimento descrito neste README
 4. Faça commits e pushes para o **seu repositório**
 
@@ -103,10 +105,10 @@ Antes de enviar, certifique-se de que:
 - [x] O repositório está configurado como **público** (não privado)
 - [x] A branch `main` contém o projeto original
 - [x] A branch `release` contém todas as suas modificações
-- [ ] Existe um Pull Request da `release` para a `main` **no seu repositório**
-- [ ] O README está atualizado com suas modificações
-- [ ] O projeto está funcionando corretamente
-- [ ] As credenciais de teste estão documentadas
+- [X] Existe um Pull Request da `release` para a `main` **no seu repositório**
+- [X] O README está atualizado com suas modificações
+- [X] O projeto está funcionando corretamente
+- [X] As credenciais de teste estão documentadas
 
 > **🎯 LEMBRE-SE**: O link que você enviará deve ser do formato:
 > `https://github.com/SEU-USUARIO/TestTecVix`
@@ -299,7 +301,7 @@ cd backend-node-vix-test
 npm run dev
 ```
 
-A API estará disponível em: **http://localhost:3001**
+A API estará disponível em: **<http://localhost:3001>**
 
 #### Frontend
 
@@ -308,7 +310,7 @@ cd frontend-react-vix-test
 npm run dev
 ```
 
-O frontend estará disponível em: **http://localhost:3000**
+O frontend estará disponível em: **<http://localhost:3000>**
 
 ---
 
@@ -454,10 +456,12 @@ main (projeto original)
 1. **Mantenha a `main`** com o projeto original (sem modificações)
 2. **Crie uma branch `release`** a partir da `main`
 3. **Para cada funcionalidade/tela**, crie uma branch específica:
+
    ```bash
    git checkout release
    git checkout -b feature/nome-da-funcionalidade
    ```
+
 4. **Ao finalizar cada funcionalidade**:
    - Faça commits descritivos
    - Abra um Pull Request da `feature/*` para `release`
@@ -684,9 +688,34 @@ git commit -m "docs: atualiza README com credenciais de teste"
 #### Testes
 
 - [ ] Implementar **testes de snapshot**
-- [ ] Implementar **testes unitários**
-- [ ] Implementar **testes de integração**
-- [ ] Implementar **testes E2E (end-to-end)**
+- [x] Implementar **testes unitários**
+- [x] Implementar **testes de integração**
+- [x] Implementar **testes E2E (end-to-end)**
+
+**Testes implementados:**
+
+- **E2E**: Validação do comportamento da API para rotas não implementadas (retorno 501)
+- **Integração**: Autenticação (registro, login, proteção de rotas), CRUD de usuários, VMs e BrandMaster
+- **Unitários**: Services (VM, Address, BucketLocal, BrandMaster), Controllers (VM, User, Address, BrandMaster, Bucket), Middlewares de autenticação (isAdmin, isManagerOrIsAdmin, isSelfOrIsManagerOrIsAdm), Utils (sanetizeName, jwt)
+- **Coverage**: Threshold mínimo 70% (atual: ~87% statements, ~73% branches, ~72% functions, ~87% lines)
+
+**Comandos para executar:**
+
+```bash
+cd backend-node-vix-test
+
+# Rodar todos os testes com coverage
+npm test
+
+# Rodar testes específicos
+npx jest __tests__/services/VMService.test.ts
+
+# Visualizar relatório HTML de coverage
+npm test -- --coverage
+# Abrir: coverage/lcov-report/index.html
+```
+
+> **📖 Para mais detalhes sobre a estrutura de testes**, consulte o [README do backend](backend-node-vix-test/README.md#execução-dos-testes).
 
 #### Documentação Swagger
 
@@ -808,7 +837,7 @@ Se tiver dúvidas sobre o teste, entre em contato com o time da Vituax.
 
 ## 🎯 Lembrete Final
 
-### Não se esqueça de:
+### Não se esqueça de
 
 1. ✅ **Fazer o fork** deste repositório para sua conta do GitHub
 2. ✅ **Trabalhar no seu repositório** (não no repositório original)
