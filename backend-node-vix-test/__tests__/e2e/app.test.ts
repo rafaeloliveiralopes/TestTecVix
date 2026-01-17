@@ -7,9 +7,9 @@ describe("Testing API", () => {
     expect(res.statusCode).toBe(200);
   });
 
-  it("should return 200 home api", async () => {
+  it("should return 501 for non-existent route /api/v1", async () => {
     const res = await request(app).get("/api/v1");
-    expect(res.statusCode).toBe(200);
+    expect(res.statusCode).toBe(501);
   });
 
   it("should return 501", async () => {

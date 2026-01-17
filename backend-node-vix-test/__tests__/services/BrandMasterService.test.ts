@@ -2,15 +2,15 @@ import { BrandMasterService } from "../../src/services/BrandMasterService";
 import { BrandMasterModel } from "../../src/models/BrandMasterModel";
 // Mocks
 jest.mock("../../src/models/BrandMasterModel");
-jest.mock("../../src/models/LogBrandMasterModel");
 
 describe("BrandMasterService", () => {
   let brandMasterService: BrandMasterService;
   let brandMasterModel: jest.Mocked<BrandMasterModel>;
 
   beforeEach(() => {
-    brandMasterModel = new BrandMasterModel() as jest.Mocked<BrandMasterModel>;
-    brandMasterService = new BrandMasterService(brandMasterModel);
+    brandMasterService = new BrandMasterService();
+    // Acessa o model mockado criado internamente pelo service
+    brandMasterModel = (brandMasterService as any)["brandMasterModel"];
   });
 
   describe("updateBrandMaster", () => {
@@ -25,10 +25,9 @@ describe("BrandMasterService", () => {
       expect(brandMasterModel.updateBrandMaster).toHaveBeenCalled();
     });
 
-    it("updateBrandMaster should not be called", async () => {
+    it("updateBrandMaster rejects when brandMaster not found", async () => {
       const idbrandMaster = 1;
-      brandMasterModel.updateBrandMaster.mockResolvedValue({} as any);
-      brandMasterModel.getById.mockResolvedValue({ idbrandMaster: 1 } as any);
+      brandMasterModel.getById.mockResolvedValue(null);
       await expect(
         brandMasterService.updateBrandMaster(idbrandMaster, {}, {
           idBrandMaster: 2,
