@@ -7,18 +7,22 @@ import { authUser } from "../auth/authUser";
 import { userRoutes } from "./user.routes";
 import { addressRoutes } from "./address.routes";
 import { uploadRoutes } from "./upload.routes";
+import { API_VERSION, ROOT_PATH } from "../constants/basePathRoutes";
 
 export const routes = Router();
 
+// Rotas públicas (não exigem JWT)
 routes.use(authRoutes);
-
-// Rotas públicas (não exigem JWT): necessárias para carregar imagens e resolver URLs do bucket.
 routes.use(uploadsRoutes);
 routes.use(uploadRoutes);
 
-// Rotas públicas: /auth/login e /auth/register. A partir daqui, exigir JWT nas demais rotas
-routes.use(authUser);
+// Middleware de autenticação aplicado apenas nos paths protegidos (evita bloqueio global)
+routes.use(`${API_VERSION.V1}/users`, authUser);
+routes.use(`${API_VERSION.V1}${ROOT_PATH.ADDRESS}`, authUser);
+routes.use(`${API_VERSION.V1}${ROOT_PATH.BRANDMASTER}`, authUser);
+routes.use(`${API_VERSION.V1}${ROOT_PATH.VM}`, authUser);
 
+// Rotas protegidas
 routes.use(userRoutes);
 routes.use(addressRoutes);
 routes.use(brandMasterRoutes);
